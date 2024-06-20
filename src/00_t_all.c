@@ -21,13 +21,13 @@ void	*t_error_set(t_all *all, t_error error)
 int	t_all_init(t_all *all, int ac, char **av)
 {
 	all->av = parse_args(all, ac, av);
-	if (all->av)
-	{
-		all->philo = t_philotab_init(all);
-		return (0);
-	}
-	else
-		return (-1);
+	if (!all->av)
+		return (1);
+	all->mutex = calloc(all->av[nbr], sizeof(pthread_mutex_t));
+	if (!all->mutex)
+		return (2);
+	all->philo = t_philotab_init(all);
+	return (0);
 }
 
 void	t_all_destroy(t_all *all)

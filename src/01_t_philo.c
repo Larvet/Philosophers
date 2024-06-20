@@ -24,8 +24,13 @@ void	t_philo_init(t_all *all, t_philo *p, size_t i)
 	p->av = all->av;
 	p->index = i + 1;
 	p->error = all->error;
+	p->mutex[0] = all->mutex[i];
+	if (i < p->av[nbr] - 1)
+		p->mutex[1] = all->mutex[i + 1];
+	else
+		p->mutex[1] = all->mutex[0];
 /*	if (pthread_create(&p->thread, NULL, &routine, p) == - 1)
-		return ;
+		return ;	// fonction separee
 */	
 }
 

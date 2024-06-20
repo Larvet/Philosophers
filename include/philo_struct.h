@@ -23,6 +23,7 @@ typedef struct s_philo
 	size_t			**av;
 	size_t			index;
 	t_state			state;
+	pthread_mutex_t	mutex[2];
 	pthread_t		thread;
 	void			*routine_return;
 /*	t_action_f		eat_action;
@@ -38,10 +39,10 @@ typedef struct s_philo
 
 typedef struct s_all
 {
-	size_t		**av;
-	t_philo		*philo;
-	//t_fork_f	*fork;
-	t_error		error;
+	size_t			**av;
+	t_philo			*philo;
+	pthread_mutex_t	*mutex;
+	t_error			error;
 }	t_all;
 
 #endif
