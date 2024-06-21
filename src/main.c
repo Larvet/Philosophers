@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/10 17:18:50 by marvin            #+#    #+#             */
-/*   Updated: 2024/06/10 17:18:50 by marvin           ###   ########.fr       */
+/*   Created: 2024/06/21 16:05:42 by locharve          #+#    #+#             */
+/*   Updated: 2024/06/21 16:05:42 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,12 @@
 
 int	main(int argc, char **argv)
 {
-	//size_t	**tab;
-	(void) argv;
 	t_all	all;
 
 	if (argc > 6)
 		printf("Too many arguments.\n");
-	else if (argc == 5 || argc == 6)
+	else if (argc >= 5)
 	{
-		//tab = check_args(argc - 1, &argv[1]);
 		if (check_format(argv + 1))
 		{
 			t_all_init(&all, argc - 1, argv + 1);

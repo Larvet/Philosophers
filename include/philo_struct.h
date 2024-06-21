@@ -25,13 +25,10 @@ typedef struct s_philo
 	t_state			state;
 	pthread_mutex_t	mutex[2];
 	pthread_t		thread;
-	void			*routine_return;
+//	void			*routine_return;
 /*	t_action_f		eat_action;
 	t_action_f		sleep_action;
 	t_action_f		think_action;
-	t_fork_f		left_f;
-	t_fork_f		right_f;
-	unsigned int	hands_full;
 */
 	size_t			meal_nbr;
 	t_error			error;
@@ -42,6 +39,7 @@ typedef struct s_all
 	size_t			**av;
 	t_philo			*philo;
 	pthread_mutex_t	*mutex;
+	unsigned long	start_time;
 	t_error			error;
 }	t_all;
 

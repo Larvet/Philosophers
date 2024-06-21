@@ -28,11 +28,14 @@ typedef enum e_error
 	err_malloc,
 	err_invalid_arg,
 	err_thcreate,
-	err_thjoin
+	err_thjoin,
+	err_mlock,
+	err_munlock
 }	t_error;
 
 typedef enum e_state
 {
+	init,
 	dead,
 	eating,
 	sleeping,

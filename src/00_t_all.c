@@ -18,6 +18,14 @@ void	*t_error_set(t_all *all, t_error error)
 	return (NULL);
 }
 
+unsigned long	gettimestamp(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
 int	t_all_init(t_all *all, int ac, char **av)
 {
 	all->av = parse_args(all, ac, av);
@@ -27,6 +35,7 @@ int	t_all_init(t_all *all, int ac, char **av)
 	if (!all->mutex)
 		return (2);
 	all->philo = t_philotab_init(all);
+	all->start_time = gettimestamp();
 	return (0);
 }
 

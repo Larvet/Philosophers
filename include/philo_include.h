@@ -19,4 +19,10 @@
 # include <stdio.h>
 # include <pthread.h>
 
+# define THINKING "is thinking"
+# define FORK_TAKEN "has taken a fork"
+# define EATING "is eating"
+# define SLEEPING "is sleeping"
+# define DIED "died"
+
 #endif

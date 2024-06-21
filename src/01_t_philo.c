@@ -3,35 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   01_t_philo.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/11 19:37:34 by marvin            #+#    #+#             */
-/*   Updated: 2024/06/11 19:37:34 by marvin           ###   ########.fr       */
+/*   Created: 2024/06/21 16:06:36 by locharve          #+#    #+#             */
+/*   Updated: 2024/06/21 16:06:36 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*routine(void *arg); // arg == philo[i]
-{
-	/*
-		while (hands_full < 2)
-	*/
-}
-
 void	t_philo_init(t_all *all, t_philo *p, size_t i)
 {
 	p->av = all->av;
 	p->index = i + 1;
-	p->error = all->error;
-	p->mutex[0] = all->mutex[i];
+	p->state = init;
+	p->f[0]->mutex = all->mutex[i];
+	p->f[0]->taken = 0;
 	if (i < p->av[nbr] - 1)
-		p->mutex[1] = all->mutex[i + 1];
+		p->f[1]->mutex = all->mutex[i + 1];
 	else
-		p->mutex[1] = all->mutex[0];
-/*	if (pthread_create(&p->thread, NULL, &routine, p) == - 1)
-		return ;	// fonction separee
-*/	
+		p->f[1]->mutex = all->mutex[0];
+	p->f[1]->taken = 0;
+	p->last_meal_time = all->start_time;
+	p->meal_nbr = 0;
+	p->error = all->error;
 }
 
 void	t_philotab_print(t_philo *p)
@@ -65,4 +60,10 @@ t_philo	*t_philotab_init(t_all *all)
 		i++;
 	}
 	return (result);
+}
+
+void	t_philo_change_state(t_philo *p, t_state state)
+{
+	p->state = state;
+	state_putstr(); //
 }
