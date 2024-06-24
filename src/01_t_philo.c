@@ -17,13 +17,13 @@ void	t_philo_init(t_all *all, t_philo *p, size_t i)
 	p->av = all->av;
 	p->index = i + 1;
 	p->state = init;
-	p->f[0]->mutex = all->mutex[i];
-	p->f[0]->taken = 0;
-	if (i < p->av[nbr] - 1)
-		p->f[1]->mutex = all->mutex[i + 1];
+	p->f[0].mutex = all->mutex[i];
+	p->f[0].taken = 0;
+	if (i < *(p->av[nbr]) - 1)
+		p->f[1].mutex = all->mutex[i + 1];
 	else
-		p->f[1]->mutex = all->mutex[0];
-	p->f[1]->taken = 0;
+		p->f[1].mutex = all->mutex[0];
+	p->f[1].taken = 0;
 	p->start_time = all->start_time;
 	p->last_meal_time = all->start_time;
 	p->meal_nbr = 0;
@@ -77,11 +77,14 @@ char	*set_state_str(t_state state)
 		return (NULL);
 }
 
-void	t_philo_set_state(t_philo *p, t_state state)
+size_t	t_philo_set_state(t_philo *p, t_state state)
 {
+	size_t	timestamp;
 	char	*state_str;
 
+	timestamp = get_timestamp() - p->start_time;
 	p->state = state;
-	printf("%lu %lu %s\n", gettimestamp() - p->start_time,
+	printf("%lu %lu %s\n", timestamp,
 		p->index, get_state_str(state));
+	return (timestamp);
 }

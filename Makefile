@@ -28,7 +28,9 @@ SRC =	00_t_all.c \
 		check_format.c \
 		main.c \
 		parsing.c \
-		size_ttab_utils.c
+		size_ttab_utils.c \
+		t_philo_action.c \
+		t_philo_lock_mutex.c
 OBJ =	$(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
 all: $(NAME)

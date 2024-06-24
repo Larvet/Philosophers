@@ -31,7 +31,7 @@ int	t_all_init(t_all *all, int ac, char **av)
 	all->av = parse_args(all, ac, av);
 	if (!all->av)
 		return (1);
-	all->mutex = calloc(all->av[nbr], sizeof(pthread_mutex_t));
+	all->mutex = calloc(*(all->av[nbr]), sizeof(pthread_mutex_t)); // ft_calloc
 	if (!all->mutex)
 		return (2);
 	all->philo = t_philotab_init(all);
