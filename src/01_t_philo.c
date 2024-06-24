@@ -24,6 +24,7 @@ void	t_philo_init(t_all *all, t_philo *p, size_t i)
 	else
 		p->f[1]->mutex = all->mutex[0];
 	p->f[1]->taken = 0;
+	p->start_time = all->start_time;
 	p->last_meal_time = all->start_time;
 	p->meal_nbr = 0;
 	p->error = all->error;
@@ -62,8 +63,25 @@ t_philo	*t_philotab_init(t_all *all)
 	return (result);
 }
 
-void	t_philo_change_state(t_philo *p, t_state state)
+char	*set_state_str(t_state state)
 {
+	if (state = dead)
+		return (DIED);
+	else if (state = eating)
+		return (EATING);
+	else if (state = sleeping)
+		return (SLEEPING);
+	else if (state = thinking)
+		return (THINKING);
+	else
+		return (NULL);
+}
+
+void	t_philo_set_state(t_philo *p, t_state state)
+{
+	char	*state_str;
+
 	p->state = state;
-	state_putstr(); //
+	printf("%lu %lu %s\n", gettimestamp() - p->start_time,
+			p->index, get_state_str(state));
 }

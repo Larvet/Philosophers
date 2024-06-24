@@ -18,7 +18,7 @@ void	*t_error_set(t_all *all, t_error error)
 	return (NULL);
 }
 
-unsigned long	gettimestamp(void)
+unsigned long	get_timestamp(void)
 {
 	struct timeval	tv;
 
@@ -35,7 +35,7 @@ int	t_all_init(t_all *all, int ac, char **av)
 	if (!all->mutex)
 		return (2);
 	all->philo = t_philotab_init(all);
-	all->start_time = gettimestamp();
+	all->start_time = get_timestamp();
 	return (0);
 }
 

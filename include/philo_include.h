@@ -20,7 +20,7 @@
 # include <pthread.h>
 
 # define THINKING "is thinking"
-# define FORK_TAKEN "has taken a fork"
+# define FORK_TAKEN "has taken a fork" // not s state
 # define EATING "is eating"
 # define SLEEPING "is sleeping"
 # define DIED "died"

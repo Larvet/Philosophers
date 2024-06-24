@@ -23,17 +23,10 @@ int	main(int argc, char **argv)
 		if (check_format(argv + 1))
 		{
 			t_all_init(&all, argc - 1, argv + 1);
-			t_all_print(&all);
+			// lancer routines
+			// t_all_print(&all);
+
 			t_all_destroy(&all);
-			/*
-			tab = check_args(arg - 1, argv + 1);
-			if (tab)
-			{
-				size_tptrtab_print(tab);
-				size_tptrtab_free(tab);
-				//free(tab);
-			}
-			*/
 		}
 		else
 			printf("Invalid argument(s).\n");

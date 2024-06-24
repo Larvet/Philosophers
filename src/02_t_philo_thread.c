@@ -12,21 +12,41 @@
 
 #include "philo.h"
 
-t_error	lock_mutex(t_philo *p)
+t_error	t_philo_lock_mutex(t_philo *p)
 {
 	if (p->index % 2)
 	{
-		if (pthread_mutex_lock(&p->mutex[0]) || pthread_mutex_lock(&p->mutex[1]))
-			return (err_mlock);
+		if (!pthread_mutex_lock(&p->mutex[0]))
+		{
+			printf("%lu %lu %s\n", get_timestamp() - p->start_time,
+					p->index, FORK_TAKEN);
+			if (!pthread_mutex_lock(&p->mutex[1]))
+			{
+				printf("%lu %lu %s\n", get_timestamp() - p->start_time,
+					p->index, FORK_TAKEN);
+				return (err_none);
+			}
+		}
+		return (err_mlock);
 	}
 	else
 	{
-		if (pthread_mutex_lock(&p->mutex[1]) || pthread_mutex_lock(&p->mutex[0]))
-			return (err_mlock);
+		if (!pthread_mutex_lock(&p->mutex[1]))
+		{
+			printf("%lu %lu %s\n", get_timestamp() - p->start_time,
+					p->index, FORK_TAKEN);
+			if (!pthread_mutex_lock(&p->mutex[0]))
+			{
+				printf("%lu %lu %s\n", get_timestamp() - p->start_time,
+					p->index, FORK_TAKEN);
+				return (err_none);
+			}
+		}
+		return (err_mlock);
 	}
 }
 
-t_error	unlock_mutex(t_philo *p)
+t_error	t_philo_unlock_mutex(t_philo *p) //
 {
 	if (p->index % 2)
 	{
@@ -45,25 +65,26 @@ void	*routine(void *arg); // arg == philo[i]
 	t_philo	*p;
 
 	p = (t_philo *)arg;
-	t_philo_change_state(p, thinking);
+	t_philo_set_state(p, thinking);
 
-	while (p->f[0]->taken)
+	while ((!p->av[must_eat] || p->meal_nbr < p->av[must_eat])
+			p->state != dead)
 	{
-		if (gettimestamp() - p->last_meal_time >= p->av[to_die])
-		{
-			t_philo_change_state(p, dead);
-			return (NULL); //////
-		}
-		usleep(100);
+		if (t_philo_odd_or_even_mutex(p, t_philo_lock_mutex, 0))
+			return (NULL);
+		t_philo_set_state(p, eating);
+		p->last_meal_time = get_timestamp() - p->start_time; //
+		// t_philo_eat
+		p->meal_nbr++;
+		// check p->state != dead
+		if (t_philo_odd_or_even_mutex(p, t_philo_unlock_mutex, 1))
+			return (NULL);
+		t_philo_set_state(p, sleeping);
+		//t_philo_sleep
+		// check p->state != dead
+		t_philo_set_state(p, thinking);
+		//t_philo_think
 	}
-	
-	p->error = lock_mutex(p);
-	if (p->error)
-		return (NULL); //
-	// routine
-	p->error = unlock_mutex(p);
-	if (p->error)
-		return (NULL); //
 }
 
 void	*t_philotab_thcreate(t_philo *p, size_t n)

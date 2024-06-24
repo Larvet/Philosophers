@@ -18,18 +18,26 @@ typedef int	t_action_f(t_philo philo, size_t t_d, size_t act);
 typedef int t_fork_f(t_philo philo);
 typedef struct s_all	t_all;
 
+typedef struct s_fork
+{
+	pthread_mutex_t	mutex;
+	int				taken;
+}	t_fork;
+
 typedef struct s_philo
 {
 	size_t			**av;
 	size_t			index;
 	t_state			state;
-	pthread_mutex_t	mutex[2];
+	t_fork			f[2];
 	pthread_t		thread;
 //	void			*routine_return;
 /*	t_action_f		eat_action;
 	t_action_f		sleep_action;
 	t_action_f		think_action;
 */
+	size_t			start_time;
+	size_t			last_meal_time; // unsigned long ?
 	size_t			meal_nbr;
 	t_error			error;
 }	t_philo;

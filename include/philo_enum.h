@@ -30,7 +30,8 @@ typedef enum e_error
 	err_thcreate,
 	err_thjoin,
 	err_mlock,
-	err_munlock
+	err_munlock,
+	err_dead	// ?
 }	t_error;
 
 typedef enum e_state
