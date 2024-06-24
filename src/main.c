@@ -6,7 +6,7 @@
 /*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 16:05:42 by locharve          #+#    #+#             */
-/*   Updated: 2024/06/21 16:05:42 by locharve         ###   ########.fr       */
+/*   Updated: 2024/06/24 15:59:52 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ int	main(int argc, char **argv)
 			t_all_init(&all, argc - 1, argv + 1);
 			// lancer routines
 			// t_all_print(&all);
-
 			t_all_destroy(&all);
 		}
 		else
@@ -33,6 +32,5 @@ int	main(int argc, char **argv)
 	}
 	else
 		printf("Too few arguments.\n");
-
 	return (0);
 }

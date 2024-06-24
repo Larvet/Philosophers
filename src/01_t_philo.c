@@ -6,7 +6,7 @@
 /*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 16:06:36 by locharve          #+#    #+#             */
-/*   Updated: 2024/06/21 16:06:36 by locharve         ###   ########.fr       */
+/*   Updated: 2024/06/24 15:47:58 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,13 @@ t_philo	*t_philotab_init(t_all *all)
 
 char	*set_state_str(t_state state)
 {
-	if (state = dead)
+	if (state == dead)
 		return (DIED);
-	else if (state = eating)
+	else if (state == eating)
 		return (EATING);
-	else if (state = sleeping)
+	else if (state == sleeping)
 		return (SLEEPING);
-	else if (state = thinking)
+	else if (state == thinking)
 		return (THINKING);
 	else
 		return (NULL);
@@ -83,5 +83,5 @@ void	t_philo_set_state(t_philo *p, t_state state)
 
 	p->state = state;
 	printf("%lu %lu %s\n", gettimestamp() - p->start_time,
-			p->index, get_state_str(state));
+		p->index, get_state_str(state));
 }

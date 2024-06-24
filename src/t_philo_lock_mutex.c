@@ -6,7 +6,7 @@
 /*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 14:12:21 by locharve          #+#    #+#             */
-/*   Updated: 2024/06/24 14:49:12 by locharve         ###   ########.fr       */
+/*   Updated: 2024/06/24 16:30:35 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ t_error	t_philo_lock_mutex(t_philo *p, t_fork *f)
 		}
 		usleep(500);
 	}
-	if (!pthread_mutex_lock(f->mutex))
+	if (!pthread_mutex_lock(&f->mutex))
 	{
 		printf("%lu %lu %s\n", get_timestamp() - p->start_time,
-				p->index, FORK_TAKEN);
+			p->index, FORK_TAKEN);
 		f->taken = 1;
 		return (err_none);
 	}
@@ -36,7 +36,7 @@ t_error	t_philo_lock_mutex(t_philo *p, t_fork *f)
 
 t_error	t_philo_unlock_mutex(t_philo *p, t_fork *f)
 {
-	if (!pthread_mutex_unlock(f->mutex))
+	if (!pthread_mutex_unlock(&f->mutex))
 	{
 		f->taken = 0;
 		return (err_none);
@@ -50,18 +50,18 @@ t_error	t_philo_odd_or_even_mutex(t_philo *p,
 {
 	if ((p->index % 2 && !b) || (!(p->index % 2) && b))
 	{
-		p->error = f_m(p, p->f[0]);
+		p->error = f_m(p, &p->f[0]);
 		if (p->error)
 			return (p->error);
-		p->error = f_m(p, p->f[1]);
+		p->error = f_m(p, &p->f[1]);
 		return (p->error);
 	}
 	else
 	{
-		p->error = f_m(p, p->f[1]);
+		p->error = f_m(p, &p->f[1]);
 		if (p->error)
 			return (p->error);
-		p->error = f_m(p, p->f[0]);
+		p->error = f_m(p, &p->f[0]);
 		return (p->error);
 	}
 }

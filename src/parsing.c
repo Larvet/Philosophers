@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 20:01:09 by marvin            #+#    #+#             */
-/*   Updated: 2024/06/10 20:01:09 by marvin           ###   ########.fr       */
+/*   Updated: 2024/06/24 16:00:38 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ size_t	**parse_args(t_all *all, int ac, char **av) // rename
 	{
 		result[i] = ft_atosize_t(av[i]);
 		if (!result[i])
-			break ; // invalid argument
+			break ;
 		i++;
 	}
 	if (i < ac)
