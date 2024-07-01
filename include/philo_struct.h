@@ -26,10 +26,12 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
+	t_all			*all;
 	size_t			**av;
 	size_t			index;
 	t_state			state;
 	t_fork			f[2];
+	pthread_mutex_t	*out_m;
 	pthread_t		thread;
 //	void			*routine_return;
 /*	t_action_f		eat_action;
@@ -45,9 +47,11 @@ typedef struct s_philo
 typedef struct s_all
 {
 	size_t			**av;
+	pthread_mutex_t	out_m;
 	t_philo			*philo;
+	//t_state			*state;
 	pthread_mutex_t	*mutex;
-	unsigned long	start_time;
+	size_t			start_time;
 	t_error			error;
 }	t_all;
 

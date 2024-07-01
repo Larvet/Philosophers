@@ -14,9 +14,12 @@
 
 void	t_philo_init(t_all *all, t_philo *p, size_t i)
 {
+	p->all = all;
 	p->av = all->av;
 	p->index = i + 1;
 	p->state = init;
+	p->out_m = &all->out_m;
+	// pthread_mutex_init(&p->out_m, NULL);
 	p->f[0].mutex = all->mutex[i];
 	p->f[0].taken = 0;
 	if (i < *(p->av[nbr]) - 1)
@@ -53,7 +56,7 @@ t_philo	*t_philotab_init(t_all *all)
 	n = *(all->av[nbr]);
 	result = calloc(n, sizeof(t_philo));
 	if (!result)
-		return (t_error_set(all, err_malloc));
+		return (t_error_set(&all->error, err_malloc));
 	i = 0;
 	while (i < n)
 	{
@@ -63,7 +66,7 @@ t_philo	*t_philotab_init(t_all *all)
 	return (result);
 }
 
-char	*set_state_str(t_state state)
+char	*get_state_str(t_state state)
 {
 	if (state == dead)
 		return (DIED);
@@ -80,11 +83,14 @@ char	*set_state_str(t_state state)
 size_t	t_philo_set_state(t_philo *p, t_state state)
 {
 	size_t	timestamp;
-	char	*state_str;
 
 	timestamp = get_timestamp() - p->start_time;
+//	printf("set_state :\tgts = %lu\tstart_time = %lu\ttimestamp = %lu\n",
+//		get_timestamp(), p->start_time, timestamp);
 	p->state = state;
+	pthread_mutex_lock(p->out_m);
 	printf("%lu %lu %s\n", timestamp,
 		p->index, get_state_str(state));
+	pthread_mutex_unlock(p->out_m);
 	return (timestamp);
 }

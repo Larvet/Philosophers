@@ -6,7 +6,7 @@
 /*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 14:12:21 by locharve          #+#    #+#             */
-/*   Updated: 2024/06/24 16:30:35 by locharve         ###   ########.fr       */
+/*   Updated: 2024/07/01 15:04:38 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,18 @@ t_error	t_philo_lock_mutex(t_philo *p, t_fork *f)
 {
 	while (f->taken)
 	{
-		if (gettimestamp() - p->last_meal_time >= p->av[to_die])
+		if (get_timestamp() - p->last_meal_time >= *(p->av[to_die]))
 		{
 			t_philo_set_state(p, dead); //
 			return (err_dead); //
 		}
+		printf("okkkkkk\n"); ///
 		usleep(500);
 	}
 	if (!pthread_mutex_lock(&f->mutex))
 	{
+		/* printf("gts : %lu\tstart_time : %lu\tcurrent : %lu\n",
+			get_timestamp(), p->start_time, get_timestamp() - p->start_time); */
 		printf("%lu %lu %s\n", get_timestamp() - p->start_time,
 			p->index, FORK_TAKEN);
 		f->taken = 1;
@@ -36,6 +39,7 @@ t_error	t_philo_lock_mutex(t_philo *p, t_fork *f)
 
 t_error	t_philo_unlock_mutex(t_philo *p, t_fork *f)
 {
+	(void) p;
 	if (!pthread_mutex_unlock(&f->mutex))
 	{
 		f->taken = 0;

@@ -14,7 +14,7 @@
 # define PHILO_PROTO_H
 
 /* 00_t_all.c */
-void	*t_error_set(t_all *all, t_error error);
+void	*t_error_set(t_error *to_set, t_error error);
 unsigned long	get_timestamp(void);
 int		t_all_init(t_all *all, int ac, char **av);
 void	t_all_destroy(t_all *all);

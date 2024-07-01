@@ -62,26 +62,46 @@ t_error	t_philo_unlock_mutex(t_philo *p) //
 	}
 }
  */
+
+static int	is_there_dead_philo(t_philo *ptab, size_t n)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < n && ptab[i].state != dead)
+		i++;
+	return (i < n);
+}
+
 void	*routine(void *arg)
 {
 	t_philo	*p;
 
 	p = (t_philo *)arg;
+	// p->last_meal_time = get_timestamp();
+	//printf("index %lu last meal time = %lu\n", p->index, p->last_meal_time); ///
+	// p->start_time = p->last_meal_time;
 	t_philo_set_state(p, thinking);
-	while ((!p->av[must_eat] || p->meal_nbr < p->av[must_eat])
-		&& p->state != dead)
+	while ((!p->av[must_eat] || p->meal_nbr < *(p->av[must_eat]))
+		&& !is_there_dead_philo(p->all->philo, *(p->av[nbr])) && p->state != dead)
 	{
+		//usleep(500); //////
 		if (t_philo_odd_or_even_mutex(p, t_philo_lock_mutex, 0))
 			return (NULL);
-		p->last_meal_time = t_philo_set_state(p, eating);
+		t_philo_set_state(p, eating);
+		//printf("ouaiiiiiis\n");
+		p->last_meal_time = get_timestamp(); ///
 		if (t_philo_eat(p))
 		{
+			//printf("hello from thread %lu\n", p->index); ///
 			t_philo_set_state(p, dead);
 			return (NULL);
 		}
 		p->meal_nbr++;
+		//printf("ouaiiiiiis mais nan\n");
 		if (t_philo_odd_or_even_mutex(p, t_philo_unlock_mutex, 1))
 			return (NULL);
+		//printf("naaaaaaaan\n"); //
 		t_philo_set_state(p, sleeping);
 		if (t_philo_sleep(p))
 		{
@@ -90,6 +110,7 @@ void	*routine(void *arg)
 		}
 		t_philo_set_state(p, thinking);
 	}
+	return (NULL);
 }
 
 void	*t_philotab_thcreate(t_philo *p, size_t n)
@@ -97,10 +118,14 @@ void	*t_philotab_thcreate(t_philo *p, size_t n)
 	size_t	i;
 
 	i = 0;
-	while (i < n && pthread_create(&p[i].thread, NULL, &routine, &p[i]))
+	while (i < n)
+	{
+		//printf("i = %lu\tn = %lu\n", i, n);
+		pthread_create(&p[i].thread, NULL, &routine, &p[i]);
 		i++;
+	}
 	if (i < n)
-		return (t_error_set(p->error, err_thcreate));
+		return (t_error_set(&p->error, err_thcreate));
 	else
 		return (p);
 }
@@ -110,10 +135,17 @@ void	*t_philotab_thjoin(t_philo *p, size_t n)
 	size_t	i;
 
 	i = 0;
-	while (i < n && pthread_join(&p[i].thread, NULL))
+	while (i < n)
+	{
+		//if (!is_there_dead_philo(&p[0], n))
+		//printf("i = %lu\tn = %lu\n", i, n); //
+		pthread_join(p[i].thread, NULL);
+		//else
+		//	pthread_detach(p[i].thread); // ?
 		i++;
+	}
 	if (i < n)
-		return (t_error_set(p->error, err_thjoin));
+		return (t_error_set(&p->error, err_thjoin));
 	else
 		return (p);
 }

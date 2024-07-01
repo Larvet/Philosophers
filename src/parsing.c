@@ -51,7 +51,7 @@ size_t	**parse_args(t_all *all, int ac, char **av) // rename
 
 	result = calloc(ac + 1, sizeof(size_t *)); //
 	if (!result)
-		return (t_error_set(all, err_malloc)); // malloc error
+		return (t_error_set(&all->error, err_malloc)); // malloc error
 	i = 0;
 	while (i < ac)
 	{
@@ -63,7 +63,7 @@ size_t	**parse_args(t_all *all, int ac, char **av) // rename
 	if (i < ac)
 	{
 		size_tptrtab_free(result); // invalid argument
-		return (t_error_set(all, err_invalid_arg));
+		return (t_error_set(&all->error, err_invalid_arg));
 	}
 	return (result);
 }
