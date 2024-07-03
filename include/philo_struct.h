@@ -21,7 +21,7 @@ typedef struct s_all	t_all;
 typedef struct s_fork
 {
 	pthread_mutex_t	mutex;
-	int				taken;
+	size_t			taken;
 }	t_fork;
 
 typedef struct s_philo
@@ -31,6 +31,7 @@ typedef struct s_philo
 	size_t			index;
 	t_state			state;
 	t_fork			f[2];
+	pthread_mutex_t	fork_m;
 	pthread_mutex_t	*out_m;
 	pthread_t		thread;
 //	void			*routine_return;

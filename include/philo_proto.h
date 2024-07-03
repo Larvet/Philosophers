@@ -52,9 +52,15 @@ int	t_philo_wait(size_t arg, size_t to_die, size_t last_meal_time); // rename ?
 int	t_philo_eat(t_philo *p);
 int	t_philo_sleep(t_philo *p);
 
-/* t_philo_lock_mutex.c */
+/* t_philo_lock_mutex.c
 t_error	t_philo_lock_mutex(t_philo *p, t_fork *f);
 t_error	t_philo_unlock_mutex(t_philo *p, t_fork *f);
 t_error	t_philo_odd_or_even_mutex(t_philo *p, t_error f_m(t_philo *, t_fork *), int b);
+*/
+
+/* t_philo_mutex.c */
+// int	t_philo_mutex_lock(t_philo *p, t_fork *f);
+int	t_philo_mutex_lock_hub(t_philo *p);
+void	t_philo_unlock_hub(t_philo *p);
 
 #endif

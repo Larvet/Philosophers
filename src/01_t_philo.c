@@ -18,6 +18,7 @@ void	t_philo_init(t_all *all, t_philo *p, size_t i)
 	p->av = all->av;
 	p->index = i + 1;
 	p->state = init;
+	pthread_mutex_init(&p->fork_m, NULL); //
 	p->out_m = &all->out_m;
 	// pthread_mutex_init(&p->out_m, NULL);
 	p->f[0].mutex = all->mutex[i];
@@ -87,7 +88,9 @@ size_t	t_philo_set_state(t_philo *p, t_state state)
 	timestamp = get_timestamp() - p->start_time;
 //	printf("set_state :\tgts = %lu\tstart_time = %lu\ttimestamp = %lu\n",
 //		get_timestamp(), p->start_time, timestamp);
+	pthread_mutex_lock(&p->fork_m);
 	p->state = state;
+	pthread_mutex_unlock(&p->fork_m);
 	pthread_mutex_lock(p->out_m);
 	printf("%lu %lu %s\n", timestamp,
 		p->index, get_state_str(state));

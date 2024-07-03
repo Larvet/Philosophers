@@ -68,12 +68,53 @@ static int	is_there_dead_philo(t_philo *ptab, size_t n)
 	size_t	i;
 
 	i = 0;
+	pthread_mutex_lock(&ptab[i].fork_m);
 	while (i < n && ptab[i].state != dead)
+	{
+		pthread_mutex_unlock(&ptab[i].fork_m);
 		i++;
+		pthread_mutex_lock(&ptab[i].fork_m);
+	}
+	pthread_mutex_unlock(&ptab[i].fork_m);
 	return (i < n);
 }
 
 void	*routine(void *arg)
+{
+	t_philo	*p;
+
+	p = (t_philo *)arg;
+	while (!is_there_dead_philo(p->all->philo, *(p->av[nbr]))
+		&& (!p->av[must_eat] || p->meal_nbr < *(p->av[must_eat])))
+	{
+		// think
+		t_philo_set_state(p, thinking);
+		// lock 2
+		if (!is_there_dead_philo(p->all->philo, *p->av[nbr])
+				&& t_philo_mutex_lock_hub(p)) // set_state
+		{
+			//printf("coucou\n"); //
+			t_philo_set_state(p, dead);
+		}
+		// eat
+		if (!is_there_dead_philo(p->all->philo, *p->av[nbr])
+				&& t_philo_eat(p))	// set_state
+			t_philo_set_state(p, dead);
+		// unlock 2
+		//p->f[0].taken = 0;
+		//p->f[1].taken = 0;
+		printf("taken 0 = %lu\t1 = %lu\n", p->f[0].taken, p->f[1].taken);
+		if (!is_there_dead_philo(p->all->philo, *p->av[nbr]))
+			t_philo_unlock_hub(p);
+		// sleep
+		if (!is_there_dead_philo(p->all->philo, *p->av[nbr])
+				&& t_philo_sleep(p)) // set state
+			t_philo_set_state(p, dead);
+	}
+	return (NULL);
+}
+
+/* void	*routine(void *arg)
 {
 	t_philo	*p;
 
@@ -111,7 +152,7 @@ void	*routine(void *arg)
 		t_philo_set_state(p, thinking);
 	}
 	return (NULL);
-}
+} */
 
 void	*t_philotab_thcreate(t_philo *p, size_t n)
 {
