@@ -6,39 +6,37 @@
 /*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 12:50:29 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/03 16:07:34 by locharve         ###   ########.fr       */
+/*   Updated: 2024/07/08 16:39:11 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 static int	t_philo_mutex_lock(t_philo *p, t_fork *f)
-{
-	pthread_mutex_lock(&p->fork_m);
+{	// proteger les lock/unlock ?
+	pthread_mutex_lock(&f->taken_m);
 	while (f->taken && get_timestamp() - p->last_meal_time < *(p->av[to_die]))
 	{
-		pthread_mutex_unlock(&p->fork_m);
+		pthread_mutex_unlock(&f->taken_m);
 		usleep(500);
-		pthread_mutex_lock(&p->fork_m);
+		pthread_mutex_lock(&f->taken_m);
 	}
 	if (f->taken)
 	{
-		pthread_mutex_unlock(&p->fork_m);
-		t_philo_set_state(p, dead);
+		pthread_mutex_unlock(&f->taken_m);
+		//t_philo_set_state(p, dead);
 		return (1); //dead
 	}
-	pthread_mutex_unlock(&p->fork_m);
+	pthread_mutex_unlock(&f->taken_m);
 	if (pthread_mutex_lock(&f->mutex))
 	{
 		//pthread_mutex_unlock(&p->fork_m);
 		//printf("coucou\n");
 		return (2);
 	}
-	pthread_mutex_lock(&p->fork_m);
-	/* printf("%lu %lu %s\n", get_timestamp() - p->start_time,
-			p->index, FORK_TAKEN); */
+	pthread_mutex_lock(&f->taken_m);
 	f->taken = p->index;
-	pthread_mutex_unlock(&p->fork_m);
+	pthread_mutex_unlock(&f->taken_m);
 	return (0);
 }
 
@@ -48,23 +46,20 @@ int	t_philo_mutex_lock_hub(t_philo *p)
 	{
 		if (t_philo_mutex_lock(p, &p->f[0]))
 			return (1);
-		printf("%lu %lu %s\n", get_timestamp() - p->start_time,
-			p->index, FORK_TAKEN);
+		//printf("fork = %lu\n", p->f[0].mutex);
+		print_state(get_timestamp() - p->start_time, p->index, FORK_TAKEN);
 		if (t_philo_mutex_lock(p, &p->f[1]))
 			return (2);
-		printf("%lu %lu %s\n", get_timestamp() - p->start_time,
-			p->index, FORK_TAKEN);
+		print_state(get_timestamp() - p->start_time, p->index, FORK_TAKEN);
 	}
 	else
 	{
 		if (t_philo_mutex_lock(p, &p->f[1]))
 			return (3);
-		printf("%lu %lu %s\n", get_timestamp() - p->start_time,
-			p->index, FORK_TAKEN);
+		print_state(get_timestamp() - p->start_time, p->index, FORK_TAKEN);
 		if (t_philo_mutex_lock(p, &p->f[0]))
 			return (4);
-		printf("%lu %lu %s\n", get_timestamp() - p->start_time,
-			p->index, FORK_TAKEN);
+		print_state(get_timestamp() - p->start_time, p->index, FORK_TAKEN);
 	}
 	return (0);
 }

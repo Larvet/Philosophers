@@ -12,26 +12,58 @@
 
 #include "philo.h"
 
-void	t_philo_init(t_all *all, t_philo *p, size_t i)
+t_error	t_fork_init(t_all *all, t_fork *f, size_t i)
+{
+	if (pthread_mutex_init(&f->taken_m, NULL))
+	{
+		t_error_set(&all->error, err_minit);
+		return (all->error);
+	}
+	f->mutex = &all->mutex[i];
+	f->taken = 0;
+	//printf("\tf = %p\n", f->mutex); //
+	/* if (i < *(all->av[nbr]) - 1)
+		f->mutex = all->mutex[i + 1];
+	else
+		f->mutex = all->mutex[0];
+	f->taken = 0; */
+	return (err_none);
+}
+
+t_error	t_philo_init(t_all *all, t_philo *p, size_t i)
 {
 	p->all = all;
 	p->av = all->av;
+	//size_tptrtab_print(p->av); //
 	p->index = i + 1;
 	p->state = init;
-	pthread_mutex_init(&p->fork_m, NULL); //
 	p->out_m = &all->out_m;
-	// pthread_mutex_init(&p->out_m, NULL);
-	p->f[0].mutex = all->mutex[i];
-	p->f[0].taken = 0;
-	if (i < *(p->av[nbr]) - 1)
-		p->f[1].mutex = all->mutex[i + 1];
+	if (pthread_mutex_init(&p->state_m, NULL))
+	{
+		t_error_set(&all->error, err_minit);
+		return (all->error);
+	}
+	//printf("philo %lu : ", p->index);
+	if (t_fork_init(all, &p->f[0], i))
+		return (all->error);
+	//printf("philo %lu : f0 = %p\n", p->index, &(p->f[0].mutex));
+	if (i < *(all->av[nbr]) - 1)
+	{
+		printf("f1 = %lu\n", i + 1);
+		t_fork_init(all, &p->f[1], i + 1);
+	}
 	else
-		p->f[1].mutex = all->mutex[0];
-	p->f[1].taken = 0;
-	p->start_time = all->start_time;
-	p->last_meal_time = all->start_time;
+	{
+		printf("f1 = 0\n");
+		t_fork_init(all, &p->f[1], 0);
+	}
+	printf("philo %lu : f1 = %p\n", p->index, &(p->f[1].mutex));
+	//printf("philo %lu : f0 = %lu\n", p->index, i);
+//	p->start_time = all->start_time; // start time juste avant pthread_create ? 
+//	p->last_meal_time = all->start_time; // start time juste avant pthread_create ?
 	p->meal_nbr = 0;
-	p->error = all->error;
+	p->error = &all->error;
+	return (err_none);
 }
 
 void	t_philotab_print(t_philo *p)
@@ -48,6 +80,23 @@ void	t_philotab_print(t_philo *p)
 	}
 }
 
+t_error	t_philotab_free(t_philo *p, size_t n)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < n && p && !pthread_mutex_destroy(&p[i].f[0].taken_m)
+			&& !pthread_mutex_destroy(&p[i].f[1].taken_m))
+		i++;
+	if (i < n)
+	{
+		t_error_set(p->error, err_mdestroy);
+		return (*(p->error)); // free p ?
+	}
+	free(p);
+	return (err_none);
+}
+
 t_philo	*t_philotab_init(t_all *all)
 {
 	t_philo	*result;
@@ -61,7 +110,12 @@ t_philo	*t_philotab_init(t_all *all)
 	i = 0;
 	while (i < n)
 	{
-		t_philo_init(all, &result[i], i);
+		if (t_philo_init(all, &result[i], i))
+		{
+			//printf("ouaiiiiiis\n"); ///
+			t_philotab_free(result, n);
+			return (NULL);
+		}
 		i++;
 	}
 	return (result);
@@ -82,18 +136,17 @@ char	*get_state_str(t_state state)
 }
 
 size_t	t_philo_set_state(t_philo *p, t_state state)
-{
-	size_t	timestamp;
-
-	timestamp = get_timestamp() - p->start_time;
-//	printf("set_state :\tgts = %lu\tstart_time = %lu\ttimestamp = %lu\n",
-//		get_timestamp(), p->start_time, timestamp);
-	pthread_mutex_lock(&p->fork_m);
+{	// return t_error ?
+	pthread_mutex_lock(&p->state_m);
 	p->state = state;
-	pthread_mutex_unlock(&p->fork_m);
+	pthread_mutex_unlock(&p->state_m);
 	pthread_mutex_lock(p->out_m);
-	printf("%lu %lu %s\n", timestamp,
-		p->index, get_state_str(state));
+	print_state(get_timestamp() - p->start_time, p->index, get_state_str(state));
 	pthread_mutex_unlock(p->out_m);
-	return (timestamp);
+	return (0);
+}
+
+void	print_state(unsigned long timestamp, size_t index, char *state_str)
+{
+	printf("%lu %lu %s\n", timestamp, index, state_str);
 }

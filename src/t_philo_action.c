@@ -6,7 +6,7 @@
 /*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 14:49:23 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/03 15:49:25 by locharve         ###   ########.fr       */
+/*   Updated: 2024/07/08 16:38:59 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,14 @@
 
 int	t_philo_wait(size_t arg, size_t to_die, size_t last_meal_time)
 {
-	//printf("wait arg = %lu\tto_die = %lu\n", arg, to_die);
-	size_t	a = get_timestamp() - last_meal_time;
-	//printf("a = %lu\n", a); ///
+	size_t	a;
+	
+	a = get_timestamp() - last_meal_time;
 	while (a < arg && a < to_die)
 	{
 		usleep(500);
 		a = get_timestamp() - last_meal_time;
-		//printf("a = %lu\targ = %lu\tto_die = %lu\n", a, arg, to_die);
 	}
-/* 	while (get_timestamp() - last_meal_time < arg
-		&& get_timestamp() - last_meal_time < to_die)
-	{
-		//printf("boucle infinie ?\n"); //
-		usleep(500);
-	} */
-	//printf("p_wait = %lu\t%lu\t%d\n", last_meal_time, to_die, get_timestamp() - last_meal_time < to_die);
 	return (!(get_timestamp() - last_meal_time < to_die));
 	// 0 : ok ; 1 : dead
 }

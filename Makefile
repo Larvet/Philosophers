@@ -26,8 +26,10 @@ SRC =	00_t_all.c \
 		01_t_philo.c \
 		02_t_philo_thread.c \
 		check_format.c \
+		ft_calloc.c \
 		main.c \
 		parsing.c \
+		routine.c \
 		size_ttab_utils.c \
 		t_philo_action.c \
 		t_philo_mutex.c

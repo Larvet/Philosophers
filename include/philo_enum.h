@@ -29,6 +29,8 @@ typedef enum e_error
 	err_invalid_arg,
 	err_thcreate,
 	err_thjoin,
+	err_minit,
+	err_mdestroy,
 	err_mlock,
 	err_munlock,
 	err_dead	// ?

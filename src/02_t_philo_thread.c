@@ -63,23 +63,7 @@ t_error	t_philo_unlock_mutex(t_philo *p) //
 }
  */
 
-static int	is_there_dead_philo(t_philo *ptab, size_t n)
-{
-	size_t	i;
-
-	i = 0;
-	pthread_mutex_lock(&ptab[i].fork_m);
-	while (i < n && ptab[i].state != dead)
-	{
-		pthread_mutex_unlock(&ptab[i].fork_m);
-		i++;
-		pthread_mutex_lock(&ptab[i].fork_m);
-	}
-	pthread_mutex_unlock(&ptab[i].fork_m);
-	return (i < n);
-}
-
-void	*routine(void *arg)
+/* void	*routine(void *arg)
 {
 	t_philo	*p;
 
@@ -112,7 +96,7 @@ void	*routine(void *arg)
 			t_philo_set_state(p, dead);
 	}
 	return (NULL);
-}
+} */
 
 /* void	*routine(void *arg)
 {
@@ -154,39 +138,40 @@ void	*routine(void *arg)
 	return (NULL);
 } */
 
-void	*t_philotab_thcreate(t_philo *p, size_t n)
+t_error	t_philotab_thcreate(t_philo *p, size_t n)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < n)
 	{
-		//printf("i = %lu\tn = %lu\n", i, n);
-		pthread_create(&p[i].thread, NULL, &routine, &p[i]);
+		(p + i)->start_time = get_timestamp();
+		(p + i)->last_meal_time = (p + i)->start_time;
+		if (pthread_create(&(p + i)->thread, NULL, &routine, p + i))
+			break ;
 		i++;
 	}
 	if (i < n)
-		return (t_error_set(&p->error, err_thcreate));
+	{
+		t_error_set(p->error, err_thcreate);
+		return (*(p->error));
+	}
 	else
-		return (p);
+		return (err_none);
 }
 
-void	*t_philotab_thjoin(t_philo *p, size_t n)
+t_error	t_philotab_thjoin(t_philo *p, size_t n)
 {
 	size_t	i;
 
 	i = 0;
-	while (i < n)
-	{
-		//if (!is_there_dead_philo(&p[0], n))
-		//printf("i = %lu\tn = %lu\n", i, n); //
-		pthread_join(p[i].thread, NULL);
-		//else
-		//	pthread_detach(p[i].thread); // ?
+	while (i < n && !pthread_join(p[i].thread, NULL))
 		i++;
-	}
 	if (i < n)
-		return (t_error_set(&p->error, err_thjoin));
+	{
+		t_error_set(p->error, err_thjoin);
+		return (*(p->error));
+	}
 	else
-		return (p);
+		return (err_none);
 }

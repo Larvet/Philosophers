@@ -20,7 +20,8 @@ typedef struct s_all	t_all;
 
 typedef struct s_fork
 {
-	pthread_mutex_t	mutex;
+	pthread_mutex_t	taken_m;
+	pthread_mutex_t	*mutex;
 	size_t			taken;
 }	t_fork;
 
@@ -31,28 +32,23 @@ typedef struct s_philo
 	size_t			index;
 	t_state			state;
 	t_fork			f[2];
-	pthread_mutex_t	fork_m;
-	pthread_mutex_t	*out_m;
 	pthread_t		thread;
-//	void			*routine_return;
-/*	t_action_f		eat_action;
-	t_action_f		sleep_action;
-	t_action_f		think_action;
-*/
+	pthread_mutex_t	*out_m;
+	pthread_mutex_t	state_m;
 	size_t			start_time;
 	size_t			last_meal_time; // unsigned long ?
 	size_t			meal_nbr;
-	t_error			error;
+	t_error			*error;
 }	t_philo;
 
 typedef struct s_all
 {
 	size_t			**av;
-	pthread_mutex_t	out_m;
 	t_philo			*philo;
-	//t_state			*state;
 	pthread_mutex_t	*mutex;
-	size_t			start_time;
+	pthread_mutex_t	out_m;
+//	pthread_mutex_t	state_m;
+//	size_t			start_time;
 	t_error			error;
 }	t_all;
 

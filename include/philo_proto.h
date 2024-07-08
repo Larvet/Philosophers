@@ -16,21 +16,24 @@
 /* 00_t_all.c */
 void	*t_error_set(t_error *to_set, t_error error);
 unsigned long	get_timestamp(void);
-int		t_all_init(t_all *all, int ac, char **av);
+t_error	t_all_init(t_all *all, int ac, char **av);
 void	t_all_destroy(t_all *all);
 void	t_all_print(t_all *all);
+void	print_error(t_error error);
 
 /* 01_t_philo.c */
-void	t_philo_init(t_all *all, t_philo *p, size_t i);
+t_error	t_fork_init(t_all *all, t_fork *f, size_t i);
+t_error	t_philo_init(t_all *all, t_philo *p, size_t i);
 void	t_philotab_print(t_philo *p);
+t_error	t_philotab_free(t_philo *p, size_t n);
 t_philo	*t_philotab_init(t_all *all);
-char	*set_state_str(t_state state);
+char	*get_state_str(t_state state);
 size_t	t_philo_set_state(t_philo *p, t_state state);
+void	print_state(unsigned long timestamp, size_t index, char *state_str);
 
 /* 02_t_philo_thread.c */
-void	*routine(void *arg);
-void	*t_philotab_thcreate(t_philo *p, size_t n);
-void	*t_philotab_thjoin(t_philo *p, size_t n);
+t_error	t_philotab_thcreate(t_philo *p, size_t n);
+t_error	t_philotab_thjoin(t_philo *p, size_t n);
 
 /* check_format.c */
 int		ft_isdigit(int c);
@@ -41,6 +44,14 @@ int		check_format(char **av);
 int		ft_isspace(int c);
 size_t	*ft_atosize_t(char *str);
 size_t	**parse_args(t_all *all, int ac, char **av);
+
+/* ft_calloc.c */
+void	ft_bzero(void *s, size_t n);
+void	*ft_calloc(size_t nmemb, size_t size);
+
+/* routine.c */
+//int	is_there_dead_philo(t_philo *ptab, size_t n);
+void	*routine(void *arg);
 
 /* size_ttab_utils.c */
 void	size_tptrtab_free(size_t **tab);

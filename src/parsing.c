@@ -60,8 +60,9 @@ size_t	**parse_args(t_all *all, int ac, char **av) // rename
 			break ;
 		i++;
 	}
-	if (i < ac)
+	if (i < ac || *result[1] > 200)
 	{
+		//printf("bonjour\n"); /////
 		size_tptrtab_free(result); // invalid argument
 		return (t_error_set(&all->error, err_invalid_arg));
 	}

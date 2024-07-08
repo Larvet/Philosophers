@@ -22,12 +22,16 @@ int	main(int argc, char **argv)
 	{
 		if (check_format(argv + 1))
 		{
-			t_all_init(&all, argc - 1, argv + 1);
-			if (t_philotab_thcreate(all.philo, *(all.av[nbr])))
-				t_philotab_thjoin(all.philo, *(all.av[nbr]));
+			if (t_all_init(&all, argc - 1, argv + 1))
+				print_error(all.error);
+			else //
+			{
+				if (!t_philotab_thcreate(all.philo, *(all.av[nbr])))
+					t_philotab_thjoin(all.philo, *(all.av[nbr]));
 			// lancer routines
 			// t_all_print(&all);
-			t_all_destroy(&all);
+				t_all_destroy(&all);
+			}
 		}
 		else
 			printf("Invalid argument(s).\n");

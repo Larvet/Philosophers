@@ -12,6 +12,26 @@
 
 #include "philo.h"
 
+static int	ft_strlen(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str && str[i])
+		i++;
+	return (i);
+}
+
+static int	is_empty_str_in_tab(char **av)
+{
+	int	i;
+
+	i = 0;
+	while (av && av[i] && ft_strlen(av[i]) > 0)
+		i++;
+	return (av && av[i]);
+}
+
 int	ft_isdigit(int c)
 {
 	return (c >= 48 && c <= 57);
@@ -24,5 +44,5 @@ int	isonly_digit(char *str)
 
 int	check_format(char **av)
 {
-	return (av && (!*av || (isonly_digit(*av) && check_format(av + 1))));
+	return (!is_empty_str_in_tab(av) && isonly_digit(*av));
 }
