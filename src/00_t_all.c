@@ -86,8 +86,12 @@ static t_error	mutextab_destroy(pthread_mutex_t *mtab, size_t n)
 
 void	t_all_destroy(t_all *all)
 {
-	if (all->mutex && mutextab_destroy(all->mutex, *(all->av[nbr])))
-		t_error_set(&all->error, err_mdestroy);
+	if (all->mutex)
+	{
+		if (mutextab_destroy(all->mutex, *(all->av[nbr])))
+			t_error_set(&all->error, err_mdestroy);
+		free(all->mutex);
+	}
 	if (all->philo)
 	{
 		//out_mutex_destroy(all->philo, *(all->av[nbr]));

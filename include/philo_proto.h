@@ -29,7 +29,7 @@ t_error	t_philotab_free(t_philo *p, size_t n);
 t_philo	*t_philotab_init(t_all *all);
 char	*get_state_str(t_state state);
 size_t	t_philo_set_state(t_philo *p, t_state state);
-void	print_state(unsigned long timestamp, size_t index, char *state_str);
+void	print_state(pthread_mutex_t *m, unsigned long time, size_t i, char *str);
 
 /* 02_t_philo_thread.c */
 t_error	t_philotab_thcreate(t_philo *p, size_t n);
@@ -50,7 +50,7 @@ void	ft_bzero(void *s, size_t n);
 void	*ft_calloc(size_t nmemb, size_t size);
 
 /* routine.c */
-//int	is_there_dead_philo(t_philo *ptab, size_t n);
+int	is_there_dead_philo(t_philo *ptab, size_t n);
 void	*routine(void *arg);
 
 /* size_ttab_utils.c */

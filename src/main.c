@@ -26,6 +26,7 @@ int	main(int argc, char **argv)
 				print_error(all.error);
 			else //
 			{
+				printf("coucou\n"); ///
 				if (!t_philotab_thcreate(all.philo, *(all.av[nbr])))
 					t_philotab_thjoin(all.philo, *(all.av[nbr]));
 			// lancer routines

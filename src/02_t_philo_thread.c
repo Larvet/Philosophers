@@ -138,15 +138,31 @@ t_error	t_philo_unlock_mutex(t_philo *p) //
 	return (NULL);
 } */
 
+static void	t_philotab_set_start_time(t_philo *p, size_t n)
+{
+	size_t			i;
+	unsigned long	time;
+
+	i = 0;
+	time = get_timestamp();
+	while (i < n)
+	{
+		(p + i)->start_time = time;
+		(p + i)->last_meal_time = (p + i)->start_time;
+		i++;
+	}
+}
+
 t_error	t_philotab_thcreate(t_philo *p, size_t n)
 {
 	size_t	i;
 
+	t_philotab_set_start_time(p, n);
 	i = 0;
 	while (i < n)
 	{
-		(p + i)->start_time = get_timestamp();
-		(p + i)->last_meal_time = (p + i)->start_time;
+		//(p + i)->start_time = get_timestamp();
+		//(p + i)->last_meal_time = (p + i)->start_time;
 		if (pthread_create(&(p + i)->thread, NULL, &routine, p + i))
 			break ;
 		i++;
