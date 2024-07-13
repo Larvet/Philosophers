@@ -33,7 +33,7 @@ static t_error	mutextab_init(pthread_mutex_t *mtab, size_t n)
 	i = 0;
 	while (i < n && !pthread_mutex_init(&mtab[i], NULL)) /// retour d'erreur ?
 	{
-		printf("mutex %lu addr = %p\n", i, &mtab[i]); //
+		//printf("mutex %lu addr = %p\n", i, &mtab[i]); //
 		i++;
 	}
 	if (i < n)
@@ -49,7 +49,7 @@ t_error	t_all_init(t_all *all, int ac, char **av)
 	//size_tptrtab_print(all->av); //
 	if (all->error)
 	{
-		printf("ouaiiiiiis\n"); //
+		//printf("ouaiiiiiis\n"); //
 		return (all->error);
 	}
 	all->mutex = ft_calloc(*(all->av[nbr]), sizeof(pthread_mutex_t));

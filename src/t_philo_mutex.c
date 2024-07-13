@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 12:50:29 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/11 17:09:26 by marvin           ###   ########.fr       */
+/*   Updated: 2024/07/13 17:21:23 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,52 @@
 
 static int	t_philo_mutex_lock(t_philo *p, t_fork *f)
 {
+	size_t	start_ts;
+	size_t	time;
+	size_t	time_td;
 	//printf("coucou\n");
 	pthread_mutex_lock(f->mutex);
 	//printf("popo\n");
-	while (f->taken && get_timestamp() - p->last_meal_time < *(p->av[to_die])
+//	printf("\t%lu ftaken 1 = %lu\n", p->index, f->taken);
+//	printf("gts = %lu\tlmt = %lu\n", get_timestamp(), p->last_meal_time);
+	start_ts = get_timestamp();
+	time = 0;
+//	printf("\tstart_ts = %lu\tpstarttime = %lu\tplastmealtime = %lu\n",
+//		start_ts, p->start_time, p->last_meal_time); //
+	time_td = start_ts - p->start_time - p->last_meal_time;
+// while: && get_timestamp() - p->start_time - p->last_meal_time < *(p->av[to_die])
+	while (f->taken && time + time_td < *(p->av[to_die])
 			&& !is_there_dead_philo(p->all->philo, *(p->av[nbr]))) //
 	{
+//		printf("-");
+		printf("time %lu + timetd %lu = %lu\n", time, time_td, time + time_td);
 		pthread_mutex_unlock(f->mutex);
 		usleep(500);
 		pthread_mutex_lock(f->mutex);
+		time = get_timestamp() - start_ts;
 	}
-	if (f->taken || is_there_dead_philo(p->all->philo, *(p->av[nbr]))) //
-	{
-		pthread_mutex_unlock(f->mutex);
-		return (1);
-	}
-	else
+//	printf("\n");
+//printf("\ttime = %lu\ttime_td = %lu\n", time, time_td); ///
+	if (time + time_td >= *(p->av[to_die]))
+		return (2); //////
+	if (!f->taken)
 	{
 		f->taken = p->index;
 		return (0);
 	}
+	else
+//	if (f->taken || is_there_dead_philo(p->all->philo, *(p->av[nbr]))) //
+	{
+		//printf("\tDEAD\n");
+		pthread_mutex_unlock(f->mutex);
+		return (1);
+	}
+//	else
+//	{
+//		f->taken = p->index;
+//		printf("\t%lu ftaken 2 = %lu\n", p->index, f->taken);
+//		return (0);
+//	}
 }
 /*
 static int	t_philo_mutex_lock(t_philo *p, t_fork *f)
@@ -71,48 +97,49 @@ int	t_philo_mutex_lock_hub(t_philo *p)
 {
     if (p->index % 2)
 	{
+		usleep(500); //
 		if (t_philo_mutex_lock(p, &p->f[0]))
-			return (1);
-		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
-		printf("\tfork taken= %p\n", p->f[0].mutex);
+			return (1);	
+//		printf("\tfork taken= %p\n", p->f[0].mutex);
+//		printf("\t%lu ftaken 3 = %lu\n", p->index, p->f[0].taken); //
 		if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 		{
 			pthread_mutex_unlock(p->f[0].mutex);
-			return (1);
+			return (-1);
 		}
+		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
 		if (t_philo_mutex_lock(p, &p->f[1]))
 			return (2);
-		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
-		printf("\tfork taken= %p\n", p->f[1].mutex);
+//		printf("\tfork taken= %p\n", p->f[1].mutex);
 		if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 		{
 			pthread_mutex_unlock(p->f[1].mutex);
 			pthread_mutex_unlock(p->f[0].mutex);
-			return (1);
+			return (-1);
 		}
-
+		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
 	}
 	else
 	{
 		if (t_philo_mutex_lock(p, &p->f[1]))
 			return (3);
-		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
-		printf("\tfork taken= %p\n", p->f[1].mutex);
+//		printf("\tfork taken= %p\n", p->f[1].mutex);
 		if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 		{
 			pthread_mutex_unlock(p->f[1].mutex);
-			return (1);
+			return (-1);
 		}
+		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
 		if (t_philo_mutex_lock(p, &p->f[0]))
 			return (4);
-		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
-		printf("\tfork taken= %p\n", p->f[0].mutex);
+//		printf("\tfork taken= %p\n", p->f[0].mutex);
 		if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 		{
 			pthread_mutex_unlock(p->f[0].mutex);
 			pthread_mutex_unlock(p->f[1].mutex);
-			return (1);
+			return (-1);
 		}
+		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
 	}
 	return (0);
 }

@@ -21,7 +21,7 @@ t_error	t_fork_init(t_all *all, t_fork *f, size_t i)
 	}
 	f->mutex = all->mutex + i;
 	f->taken = 0;
-	printf("\tf = %p\n", f->mutex); //
+//	printf("\tf = %p\n", f->mutex); //
 	/* if (i < *(all->av[nbr]) - 1)
 		f->mutex = all->mutex[i + 1];
 	else
@@ -61,6 +61,7 @@ t_error	t_philo_init(t_all *all, t_philo *p, size_t i)
 	//printf("philo %lu : f0 = %lu\n", p->index, i);
 //	p->start_time = all->start_time; // start time juste avant pthread_create ? 
 //	p->last_meal_time = all->start_time; // start time juste avant pthread_create ?
+//	p->last_meal_time = 0;
 	p->meal_nbr = 0;
 	p->error = &all->error;
 	return (err_none);
@@ -139,10 +140,11 @@ size_t	t_philo_set_state(t_philo *p, t_state state)
 {	// return t_error ?
 	pthread_mutex_lock(&p->state_m);
 	p->state = state;
-	pthread_mutex_unlock(&p->state_m);
+	//pthread_mutex_unlock(&p->state_m);
 	//pthread_mutex_lock(p->out_m);
 	print_state(p->out_m, p->start_time, p->index, get_state_str(state));
 	//pthread_mutex_unlock(p->out_m);
+	pthread_mutex_unlock(&p->state_m);
 	return (0);
 }
 
@@ -153,6 +155,6 @@ void	print_state(pthread_mutex_t *m, unsigned long time, size_t i, char *str)
 	pthread_mutex_lock(m);
 	//printf("out_m addr = %p\n", m);
 	//printf("gts = %lu\ttime = %lu\n", get_timestamp(), time);
-	printf("%lu %lu %s\n", get_timestamp() - time, i, str);
+	printf("%.5lu\t%lu %s\n", get_timestamp() - time, i, str);
 	pthread_mutex_unlock(m);
 }

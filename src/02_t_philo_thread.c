@@ -148,7 +148,7 @@ static void	t_philotab_set_start_time(t_philo *p, size_t n)
 	while (i < n)
 	{
 		(p + i)->start_time = time;
-		(p + i)->last_meal_time = (p + i)->start_time;
+		(p + i)->last_meal_time = 0;
 		i++;
 	}
 }

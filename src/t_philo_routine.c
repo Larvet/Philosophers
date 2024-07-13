@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_philo_routine.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 13:26:10 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/03 14:41:09 by locharve         ###   ########.fr       */
+/*   Updated: 2024/07/11 19:33:09 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@ static int	is_there_dead_philo(t_philo *ptab, size_t n)
 		i++;
 	return (i < n);
 }
-
+/*
 static int	t_philo_wait_fork(t_philo *p, t_fork *f)
 {
 	while (f->taken && get_timestamp() - p->last_meal_time < *(p->av[to_die]))
 		usleep(500);
 }
-
+*/
 void	*routine(void *arg)
 {
 	t_philo	*p;
