@@ -28,8 +28,6 @@ int	main(int argc, char **argv)
 			{
 				if (!t_philotab_thcreate(all.philo, *(all.av[nbr])))
 					t_philotab_thjoin(all.philo, *(all.av[nbr]));
-			// lancer routines
-			// t_all_print(&all);
 				t_all_destroy(&all);
 			}
 		}

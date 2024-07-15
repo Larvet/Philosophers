@@ -27,25 +27,6 @@ void	size_tptrtab_free(size_t **tab)
 		free(tab);
 	}
 }
-/*
-size_t	*size_ttab_convert(size_t **tab, int n) //
-{
-	size_t	*result;
-	int		i;
-
-	result = malloc(n * sizeof(size_t));
-	if (result)
-	{
-		i = 0;
-		while (i < n)
-		{
-			result[i] = *tab[i];
-			i++;
-		}
-	}
-	return (result);
-}
-*/
 
 void	size_tptrtab_print(size_t **tab)
 {

@@ -21,12 +21,6 @@ t_error	t_fork_init(t_all *all, t_fork *f, size_t i)
 	}
 	f->mutex = all->mutex + i;
 	f->taken = 0;
-//	printf("\tf = %p\n", f->mutex); //
-	/* if (i < *(all->av[nbr]) - 1)
-		f->mutex = all->mutex[i + 1];
-	else
-		f->mutex = all->mutex[0];
-	f->taken = 0; */
 	return (err_none);
 }
 
@@ -34,7 +28,6 @@ t_error	t_philo_init(t_all *all, t_philo *p, size_t i)
 {
 	p->all = all;
 	p->av = all->av;
-	//size_tptrtab_print(p->av); //
 	p->index = i + 1;
 	p->state = init;
 	p->out_m = &all->out_m;
@@ -43,25 +36,16 @@ t_error	t_philo_init(t_all *all, t_philo *p, size_t i)
 		t_error_set(&all->error, err_minit);
 		return (all->error);
 	}
-	//printf("philo %lu : ", p->index);
 	if (t_fork_init(all, &p->f[0], i))
 		return (all->error);
-	//printf("philo %lu : f0 = %p\n", p->index, &(p->f[0].mutex));
 	if (i < *(all->av[nbr]) - 1)
 	{
-		//printf("f1 = %lu\n", i + 1);
 		t_fork_init(all, &p->f[1], i + 1);
 	}
 	else
 	{
-		//printf("f1 = 0\n");
 		t_fork_init(all, &p->f[1], 0);
 	}
-//	printf("philo %lu : f1 = %p\n", p->index, &(p->f[1].mutex)); /!
-	//printf("philo %lu : f0 = %lu\n", p->index, i);
-//	p->start_time = all->start_time; // start time juste avant pthread_create ? 
-//	p->last_meal_time = all->start_time; // start time juste avant pthread_create ?
-//	p->last_meal_time = 0;
 	p->meal_nbr = 0;
 	p->error = &all->error;
 	return (err_none);
@@ -113,7 +97,6 @@ t_philo	*t_philotab_init(t_all *all)
 	{
 		if (t_philo_init(all, &result[i], i))
 		{
-			//printf("ouaiiiiiis\n"); ///
 			t_philotab_free(result, n);
 			return (NULL);
 		}
@@ -140,21 +123,14 @@ size_t	t_philo_set_state(t_philo *p, t_state state)
 {	// return t_error ?
 	pthread_mutex_lock(&p->state_m);
 	p->state = state;
-	//pthread_mutex_unlock(&p->state_m);
-	//pthread_mutex_lock(p->out_m);
 	print_state(p->out_m, p->start_time, p->index, get_state_str(state));
-	//pthread_mutex_unlock(p->out_m);
 	pthread_mutex_unlock(&p->state_m);
 	return (0);
 }
 
 void	print_state(pthread_mutex_t *m, unsigned long time, size_t i, char *str)
 {
-	//unsigned long	acc_time = get_timestamp() - time;
-
 	pthread_mutex_lock(m);
-	//printf("out_m addr = %p\n", m);
-	//printf("gts = %lu\ttime = %lu\n", get_timestamp(), time);
 	printf("%.5lu\t%lu %s\n", get_timestamp() - time, i, str);
 	pthread_mutex_unlock(m);
 }
