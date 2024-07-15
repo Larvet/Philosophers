@@ -56,7 +56,8 @@ t_error	t_all_init(t_all *all, int ac, char **av)
 		return (all->error);
 	}
 	if (mutextab_init(all->mutex, *(all->av[nbr]))
-		|| pthread_mutex_init(&all->out_m, NULL))
+		|| pthread_mutex_init(&all->out_m, NULL)
+		|| pthread_mutex_init(&all->stop_m, NULL))
 	{
 		t_error_set(&all->error, err_minit);
 		return (all->error);
@@ -64,6 +65,7 @@ t_error	t_all_init(t_all *all, int ac, char **av)
 	all->philo = t_philotab_init(all);
 	if (!all->philo)
 		return (all->error);
+	all->stop = 0;
 	return (0);
 }
 

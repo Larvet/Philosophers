@@ -31,6 +31,7 @@ t_error	t_philo_init(t_all *all, t_philo *p, size_t i)
 	p->index = i + 1;
 	p->state = init;
 	p->out_m = &all->out_m;
+	p->stop_m = &all->stop_m;
 	if (pthread_mutex_init(&p->state_m, NULL))
 	{
 		t_error_set(&all->error, err_minit);
@@ -48,6 +49,7 @@ t_error	t_philo_init(t_all *all, t_philo *p, size_t i)
 	}
 	p->meal_nbr = 0;
 	p->error = &all->error;
+	p->stop = &all->stop;
 	return (err_none);
 }
 
@@ -123,7 +125,14 @@ size_t	t_philo_set_state(t_philo *p, t_state state)
 {	// return t_error ?
 	pthread_mutex_lock(&p->state_m);
 	p->state = state;
-	print_state(p->out_m, p->start_time, p->index, get_state_str(state));
+	pthread_mutex_lock(p->stop_m);
+	if (!(*(p->stop)))
+	{
+		if (state == dead)
+			*(p->stop) = 1;
+		pthread_mutex_unlock(p->stop_m);
+		print_state(p->out_m, p->start_time, p->index, get_state_str(state));
+	}
 	pthread_mutex_unlock(&p->state_m);
 	return (0);
 }

@@ -32,7 +32,8 @@ SRC =	00_t_all.c \
 		routine.c \
 		size_ttab_utils.c \
 		t_philo_action.c \
-		t_philo_mutex.c
+		t_philo_mutex.c \
+		think.c
 OBJ =	$(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
 all: $(NAME)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 12:16:18 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/13 19:50:48 by marvin           ###   ########.fr       */
+/*   Updated: 2024/07/15 13:24:44 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,17 @@
 
 int	is_there_dead_philo(t_philo *ptab, size_t n)
 {
-	size_t	i;
+	int	r;
+	
+	(void) n;	
+	pthread_mutex_lock(ptab->stop_m); //
+	if (*(ptab->stop))
+		r = 1;
+	else
+		r = 0;
+	pthread_mutex_unlock(ptab->stop_m);
+	return (r);
+/* 	size_t	i;
 
 	i = 0;
 	while (i < n)
@@ -28,7 +38,7 @@ int	is_there_dead_philo(t_philo *ptab, size_t n)
 		pthread_mutex_unlock(&ptab[i].state_m);
 		i++;
 	}
-	return (0);
+	return (0); */
 }
 
 // les conditions pour set_dead sont mauvaises.
@@ -68,26 +78,41 @@ void	*routine(void *arg)
 	while (!is_there_dead_philo(p->all->philo, *(p->av[nbr]))
 		&& (!p->av[must_eat] || p->meal_nbr < *(p->av[must_eat])))
 	{
-		t_philo_set_state(p, thinking);
+//		printf("\t%lu 1 ftaken0 = %lu\tftaken1 = %lu\n",
+//			p->index, p->f[0].taken, p->f[1].taken);
+		if (t_philo_think(p))
+			break ;
+//		printf("\t%lu 2 ftaken0 = %lu\tftaken1 = %lu\n",
+//			p->index, p->f[0].taken, p->f[1].taken);
+/* 		t_philo_set_state(p, thinking);
 		if (!is_there_dead_philo(p->all->philo, *(p->av[nbr]))
-				&& t_philo_mutex_lock_hub(p) > 0)
-			t_philo_set_state(p, dead);
+				&& t_philo_mutex_lock_hub(p))
+			break ; */
+		//	t_philo_set_state(p, dead);
 		if (!is_there_dead_philo(p->all->philo, *p->av[nbr]))
 		{
 			if (t_philo_eat(p) > 0)	// set_state
 				t_philo_set_state(p, dead);
 			if (p->state == dead || is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 			{
-				t_philo_unlock_hub(p);
+				t_philo_drop_forks(p);
+				//t_philo_unlock_hub(p);
 				break ;
 			}
 		//	else if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 		//		break ;
 		}
+	//	if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
+	//			break ;
+	//	if (!is_there_dead_philo(p->all->philo, *p->av[nbr]))
+	//		t_philo_unlock_hub(p);
+//		printf("\t%lu 1 ftaken0 = %lu\tftaken1 = %lu\n",
+//			p->index, p->f[0].taken, p->f[1].taken);
+		t_philo_drop_forks(p);
+//		printf("\t%lu 2 ftaken0 = %lu\tftaken1 = %lu\n",
+//			p->index, p->f[0].taken, p->f[1].taken);
 		if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
-				break ;
-		if (!is_there_dead_philo(p->all->philo, *p->av[nbr]))
-			t_philo_unlock_hub(p);
+			break ;
 		if (!is_there_dead_philo(p->all->philo, *p->av[nbr])
 				&& t_philo_sleep(p) > 0) // set state
 			t_philo_set_state(p, dead);

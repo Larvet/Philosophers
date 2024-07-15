@@ -74,4 +74,9 @@ t_error	t_philo_odd_or_even_mutex(t_philo *p, t_error f_m(t_philo *, t_fork *), 
 int	t_philo_mutex_lock_hub(t_philo *p);
 void	t_philo_unlock_hub(t_philo *p);
 
+/* think.c */
+//t_state	t_philo_take_fork(t_philo *p, t_fork *f);
+int	t_philo_think(t_philo *p);
+void	t_philo_drop_forks(t_philo *p);
+
 #endif

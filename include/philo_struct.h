@@ -34,11 +34,13 @@ typedef struct s_philo
 	t_fork			f[2];
 	pthread_t		thread;
 	pthread_mutex_t	*out_m;
+	pthread_mutex_t	*stop_m;
 	pthread_mutex_t	state_m;
 	size_t			start_time;
 	size_t			last_meal_time; // unsigned long ?
 	size_t			meal_nbr;
 	t_error			*error;
+	int				*stop;
 }	t_philo;
 
 typedef struct s_all
@@ -47,9 +49,11 @@ typedef struct s_all
 	t_philo			*philo;
 	pthread_mutex_t	*mutex;
 	pthread_mutex_t	out_m;
+	pthread_mutex_t	stop_m;
 //	pthread_mutex_t	state_m;
 //	size_t			start_time;
 	t_error			error;
+	int				stop;
 }	t_all;
 
 #endif
