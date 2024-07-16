@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_philo_action.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 14:49:23 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/16 15:27:37 by locharve         ###   ########.fr       */
+/*   Updated: 2024/07/16 20:07:31 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	t_philo_eat(t_philo *p)
 	p->meal_nbr++;
 	if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 		return (-1);
-	return (time >= *(p->av[to_die]));
+	return (time > *(p->av[to_die])); // =
 }
 
 int	t_philo_sleep(t_philo *p)
@@ -52,5 +52,5 @@ int	t_philo_sleep(t_philo *p)
 	}
 	if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 		return (-1);
-	return (time + time_td >= *(p->av[to_die]));
+	return (time + time_td > *(p->av[to_die])); // =
 }

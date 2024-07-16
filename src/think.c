@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   think.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 12:29:31 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/16 15:32:29 by locharve         ###   ########.fr       */
+/*   Updated: 2024/07/16 20:07:28 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static t_state	t_philo_take_fork(t_philo *p, t_fork *f)
 			t_philo_set_state(p, dead);
 			return (p->state);
 		}
-		usleep(500);
+		usleep(1);
 		pthread_mutex_lock(f->mutex);
 		time = get_timestamp() - start_ts;
 	}
@@ -94,10 +94,16 @@ int	t_philo_think(t_philo *p)
 {
 	t_philo_set_state(p, thinking);
 
+	if (p->index % 2
+			|| (p->meal_nbr > 0 && !lmtime_is_oldest(p->all->philo, p->index)))
+	{
+		usleep(200);
+		while (p->meal_nbr > 0 && !lmtime_is_oldest(p->all->philo, p->index))
+			usleep(1);
+			// possible boucle infinie
+	}
 	if (p->index % 2)
 	{
-		if (p->meal_nbr > 0 && !lmtime_is_oldest(p->all->philo, p->index))
-			usleep(1000);
 		if (t_philo_take_fork(p, p->f[0]) == dead)
 			return (1);
 		if (t_philo_take_fork(p, p->f[1]) == dead)
