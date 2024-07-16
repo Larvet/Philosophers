@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 12:16:18 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/15 13:24:44 by locharve         ###   ########.fr       */
+/*   Updated: 2024/07/15 19:54:52 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static void	*one_philo_routine(void *arg)
 	t_philo_set_state(p, thinking);
 	if (time < *(p->av[to_die]))
 	{
-		pthread_mutex_lock(p->f[0].mutex); // erreur ?
+		pthread_mutex_lock(p->f[0]->mutex); // erreur ?
 		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
 	}
 	while (time < *(p->av[to_die]))
@@ -64,7 +64,7 @@ static void	*one_philo_routine(void *arg)
 		time = get_timestamp() - start_ts;
 	}
 	t_philo_set_state(p, dead);
-	pthread_mutex_unlock(p->f[0].mutex);
+	pthread_mutex_unlock(p->f[0]->mutex);
 	return (NULL);
 }
 
@@ -78,9 +78,10 @@ void	*routine(void *arg)
 	while (!is_there_dead_philo(p->all->philo, *(p->av[nbr]))
 		&& (!p->av[must_eat] || p->meal_nbr < *(p->av[must_eat])))
 	{
+//		printf("-----%lu-----\n", p->index); //
 //		printf("\t%lu 1 ftaken0 = %lu\tftaken1 = %lu\n",
 //			p->index, p->f[0].taken, p->f[1].taken);
-		if (t_philo_think(p))
+		if (t_philo_think(p) || is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 			break ;
 //		printf("\t%lu 2 ftaken0 = %lu\tftaken1 = %lu\n",
 //			p->index, p->f[0].taken, p->f[1].taken);
@@ -94,8 +95,9 @@ void	*routine(void *arg)
 			if (t_philo_eat(p) > 0)	// set_state
 				t_philo_set_state(p, dead);
 			if (p->state == dead || is_there_dead_philo(p->all->philo, *(p->av[nbr])))
+//					|| (p->av[must_eat] && *(p->av[must_eat]) == p->meal_nbr))
 			{
-				t_philo_drop_forks(p);
+				//t_philo_drop_forks(p);
 				//t_philo_unlock_hub(p);
 				break ;
 			}
@@ -116,6 +118,10 @@ void	*routine(void *arg)
 		if (!is_there_dead_philo(p->all->philo, *p->av[nbr])
 				&& t_philo_sleep(p) > 0) // set state
 			t_philo_set_state(p, dead);
+		if ((p->av[must_eat] && *(p->av[must_eat]) == p->meal_nbr))
+			break ;
 	}
+	if (p->av[must_eat] && p->state != dead)
+		t_philo_set_state(p, thinking);
 	return (NULL);
 }

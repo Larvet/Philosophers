@@ -41,6 +41,18 @@ static t_error	mutextab_init(pthread_mutex_t *mtab, size_t n)
 		return (err_none);
 }
 
+static void	t_forktab_init(t_all *all, size_t n)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < n)
+	{
+		all->ftab[i].mutex = &all->mutex[i];
+		i++;
+	}
+}
+
 t_error	t_all_init(t_all *all, int ac, char **av)
 {
 	all->error = err_none;
@@ -55,6 +67,12 @@ t_error	t_all_init(t_all *all, int ac, char **av)
 		t_error_set(&all->error, err_malloc);
 		return (all->error);
 	}
+	all->ftab = ft_calloc(*(all->av[nbr]), sizeof(t_fork));
+	if (!all->ftab)
+	{
+		t_error_set(&all->error, err_malloc);
+		return (all->error);
+	}
 	if (mutextab_init(all->mutex, *(all->av[nbr]))
 		|| pthread_mutex_init(&all->out_m, NULL)
 		|| pthread_mutex_init(&all->stop_m, NULL))
@@ -62,6 +80,7 @@ t_error	t_all_init(t_all *all, int ac, char **av)
 		t_error_set(&all->error, err_minit);
 		return (all->error);
 	}
+	t_forktab_init(all, *(all->av[nbr]));
 	all->philo = t_philotab_init(all);
 	if (!all->philo)
 		return (all->error);
@@ -90,6 +109,8 @@ void	t_all_destroy(t_all *all)
 			t_error_set(&all->error, err_mdestroy);
 		free(all->mutex);
 	}
+	if (all->ftab)
+		free(all->ftab);
 	if (all->philo)
 	{
 		//out_mutex_destroy(all->philo, *(all->av[nbr]));

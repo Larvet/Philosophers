@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_philo_mutex.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 12:50:29 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/15 12:45:16 by locharve         ###   ########.fr       */
+/*   Updated: 2024/07/15 16:23:29 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@ static int	t_philo_stop_unlock(t_philo *p, int n)
 	if (p->index % 2)
 	{
 		if (n)
-			pthread_mutex_unlock(p->f[1].mutex);
-		pthread_mutex_unlock(p->f[0].mutex);
+			pthread_mutex_unlock(p->f[1]->mutex);
+		pthread_mutex_unlock(p->f[0]->mutex);
 	}
 	else
 	{
 		if (n)
-			pthread_mutex_unlock(p->f[0].mutex);
-		pthread_mutex_unlock(p->f[1].mutex);
+			pthread_mutex_unlock(p->f[0]->mutex);
+		pthread_mutex_unlock(p->f[1]->mutex);
 	}
 	return (1);
 }
@@ -67,19 +67,19 @@ int	t_philo_mutex_lock_hub(t_philo *p)
     if (p->index % 2)
 	{
 		usleep(200); //
-		if (t_philo_mutex_lock(p, &p->f[0]))
+		if (t_philo_mutex_lock(p, p->f[0]))
 			return (t_philo_stop_unlock(p, 0));
 		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
-		if (t_philo_mutex_lock(p, &p->f[1]))
+		if (t_philo_mutex_lock(p, p->f[1]))
 			return (t_philo_stop_unlock(p, 1));
 		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
 	}
 	else
 	{
-		if (t_philo_mutex_lock(p, &p->f[1]))
+		if (t_philo_mutex_lock(p, p->f[1]))
 			return (t_philo_stop_unlock(p, 0));
 		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
-		if (t_philo_mutex_lock(p, &p->f[0]))
+		if (t_philo_mutex_lock(p, p->f[0]))
 			return (t_philo_stop_unlock(p, 1));
 		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
 	}
@@ -96,12 +96,12 @@ void	t_philo_unlock_hub(t_philo *p)
 {
 	if (p->index % 2)
 	{
-		t_philo_mutex_unlock(&p->f[1]);
-		t_philo_mutex_unlock(&p->f[0]);
+		t_philo_mutex_unlock(p->f[1]);
+		t_philo_mutex_unlock(p->f[0]);
 	}
 	else
 	{
-		t_philo_mutex_unlock(&p->f[0]);
-		t_philo_mutex_unlock(&p->f[1]);
+		t_philo_mutex_unlock(p->f[0]);
+		t_philo_mutex_unlock(p->f[1]);
 	}
 }

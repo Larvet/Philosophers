@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 14:49:23 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/13 17:30:59 by marvin           ###   ########.fr       */
+/*   Updated: 2024/07/15 19:23:28 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,12 @@ int	t_philo_eat(t_philo *p)
 		time = get_timestamp() - start_time;
 	}
 	if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
-		return (-1);
+	{
+/*		pthread_mutex_lock(p->out_m);
+		printf("%lu there is dead philo\n", p->index);
+		pthread_mutex_unlock(p->out_m);
+*/		return (-1);
+	}
 	return (time >= *(p->av[to_die])); // ?
 }
 
