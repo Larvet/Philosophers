@@ -12,11 +12,6 @@
 
 #include "philo.h"
 
-int	ft_isspace(int c)
-{
-	return ((c >= 9 && c <= 13) || c == 32);
-}
-
 size_t	*ft_atosize_t(char *str)
 {
 	size_t	*result;
@@ -25,7 +20,7 @@ size_t	*ft_atosize_t(char *str)
 
 	result = malloc(sizeof(size_t));
 	if (!result)
-		return (NULL); // malloc error
+		return (NULL);
 	*result = 0;
 	i = 0;
 	while (str && str[i] && ft_isspace(str[i]))
@@ -36,7 +31,7 @@ size_t	*ft_atosize_t(char *str)
 		if (tmp < *result)
 		{
 			free(result);
-			return (NULL); // invalid argument
+			return (NULL);
 		}
 		*result = tmp;
 		i++;
@@ -44,14 +39,30 @@ size_t	*ft_atosize_t(char *str)
 	return (result);
 }
 
-size_t	**parse_args(t_all *all, int ac, char **av) // rename
+void	size_tptrtab_free(size_t **tab)
+{
+	int	i;
+
+	if (tab)
+	{
+		i = 0;
+		while (tab[i])
+		{
+			free(tab[i]);
+			i++;
+		}
+		free(tab);
+	}
+}
+
+size_t	**parse_args(t_all *all, int ac, char **av)
 {
 	size_t			**result;
 	int				i;
 
-	result = calloc(ac + 1, sizeof(size_t *)); //
+	result = ft_calloc(ac + 1, sizeof(size_t *));
 	if (!result)
-		return (t_error_set(&all->error, err_malloc)); // malloc error
+		return (t_error_set(&all->error, err_malloc));
 	i = 0;
 	while (i < ac)
 	{
@@ -62,7 +73,7 @@ size_t	**parse_args(t_all *all, int ac, char **av) // rename
 	}
 	if (i < ac || *result[0] > 200)
 	{
-		size_tptrtab_free(result); // invalid argument
+		size_tptrtab_free(result);
 		return (t_error_set(&all->error, err_invalid_arg));
 	}
 	return (result);

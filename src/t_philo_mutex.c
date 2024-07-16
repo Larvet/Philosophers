@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   t_philo_mutex.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 12:50:29 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/15 16:23:29 by marvin           ###   ########.fr       */
+/*   Updated: 2024/07/16 15:31:28 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	t_philo_stop_unlock(t_philo *p, int n)
+// obsolete 
+
+/* static int	t_philo_stop_unlock(t_philo *p, int n)
 {
 	if (p->index % 2)
 	{
@@ -39,7 +41,7 @@ static int	t_philo_mutex_lock(t_philo *p, t_fork *f)
 	time = 0;
 	time_td = start_ts - p->start_time - p->last_meal_time;
 	pthread_mutex_lock(f->mutex);
-	while (f->taken && time + time_td < *(p->av[to_die])) //
+	while (f->taken && time + time_td < *(p->av[to_die]))
 	{
 		printf("time %lu + timetd %lu = %lu\n", time, time_td, time + time_td);
 		pthread_mutex_unlock(f->mutex);
@@ -66,7 +68,7 @@ int	t_philo_mutex_lock_hub(t_philo *p)
 {
     if (p->index % 2)
 	{
-		usleep(200); //
+		usleep(500); //
 		if (t_philo_mutex_lock(p, p->f[0]))
 			return (t_philo_stop_unlock(p, 0));
 		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
@@ -76,6 +78,7 @@ int	t_philo_mutex_lock_hub(t_philo *p)
 	}
 	else
 	{
+//		usleep(200);
 		if (t_philo_mutex_lock(p, p->f[1]))
 			return (t_philo_stop_unlock(p, 0));
 		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
@@ -104,4 +107,4 @@ void	t_philo_unlock_hub(t_philo *p)
 		t_philo_mutex_unlock(p->f[0]);
 		t_philo_mutex_unlock(p->f[1]);
 	}
-}
+} */

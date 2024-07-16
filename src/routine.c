@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 12:16:18 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/15 19:54:52 by marvin           ###   ########.fr       */
+/*   Updated: 2024/07/16 15:28:51 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,7 @@ int	is_there_dead_philo(t_philo *ptab, size_t n)
 		r = 0;
 	pthread_mutex_unlock(ptab->stop_m);
 	return (r);
-/* 	size_t	i;
-
-	i = 0;
-	while (i < n)
-	{
-		pthread_mutex_lock(&ptab[i].state_m);
-		if (ptab[i].state == dead)
-		{
-			pthread_mutex_unlock(&ptab[i].state_m);
-			return (1) ;
-		}
-		pthread_mutex_unlock(&ptab[i].state_m);
-		i++;
-	}
-	return (0); */
 }
-
-// les conditions pour set_dead sont mauvaises.
 
 static void	*one_philo_routine(void *arg)
 {
@@ -55,7 +38,7 @@ static void	*one_philo_routine(void *arg)
 	t_philo_set_state(p, thinking);
 	if (time < *(p->av[to_die]))
 	{
-		pthread_mutex_lock(p->f[0]->mutex); // erreur ?
+		pthread_mutex_lock(p->f[0]->mutex);
 		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
 	}
 	while (time < *(p->av[to_die]))
@@ -68,6 +51,19 @@ static void	*one_philo_routine(void *arg)
 	return (NULL);
 }
 
+static int	all_philos_ate(t_philo *p)
+{
+	size_t	i;
+
+	if (!p->av[must_eat])
+		return (0);
+	i = 0;
+	while (i < *(p->av[nbr]) && (p + i)->meal_nbr == *((p + i)->av[must_eat])
+			&& get_timestamp() - p->start_time - (p + i)->last_meal_time >= *(p + i)->av[to_eat])
+		i++;
+	return (i == *(p->av[nbr]));
+}
+
 void	*routine(void *arg)
 {
 	t_philo	*p;
@@ -78,45 +74,24 @@ void	*routine(void *arg)
 	while (!is_there_dead_philo(p->all->philo, *(p->av[nbr]))
 		&& (!p->av[must_eat] || p->meal_nbr < *(p->av[must_eat])))
 	{
-//		printf("-----%lu-----\n", p->index); //
-//		printf("\t%lu 1 ftaken0 = %lu\tftaken1 = %lu\n",
-//			p->index, p->f[0].taken, p->f[1].taken);
-		if (t_philo_think(p) || is_there_dead_philo(p->all->philo, *(p->av[nbr])))
+		if (t_philo_think(p)
+				|| is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 			break ;
-//		printf("\t%lu 2 ftaken0 = %lu\tftaken1 = %lu\n",
-//			p->index, p->f[0].taken, p->f[1].taken);
-/* 		t_philo_set_state(p, thinking);
-		if (!is_there_dead_philo(p->all->philo, *(p->av[nbr]))
-				&& t_philo_mutex_lock_hub(p))
-			break ; */
-		//	t_philo_set_state(p, dead);
 		if (!is_there_dead_philo(p->all->philo, *p->av[nbr]))
 		{
-			if (t_philo_eat(p) > 0)	// set_state
+			if (t_philo_eat(p) > 0)
 				t_philo_set_state(p, dead);
-			if (p->state == dead || is_there_dead_philo(p->all->philo, *(p->av[nbr])))
-//					|| (p->av[must_eat] && *(p->av[must_eat]) == p->meal_nbr))
-			{
-				//t_philo_drop_forks(p);
-				//t_philo_unlock_hub(p);
+			if (p->state == dead
+					|| is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 				break ;
-			}
-		//	else if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
-		//		break ;
 		}
-	//	if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
-	//			break ;
-	//	if (!is_there_dead_philo(p->all->philo, *p->av[nbr]))
-	//		t_philo_unlock_hub(p);
-//		printf("\t%lu 1 ftaken0 = %lu\tftaken1 = %lu\n",
-//			p->index, p->f[0].taken, p->f[1].taken);
 		t_philo_drop_forks(p);
-//		printf("\t%lu 2 ftaken0 = %lu\tftaken1 = %lu\n",
-//			p->index, p->f[0].taken, p->f[1].taken);
+		if (all_philos_ate(p->all->philo))
+			return (NULL);	
 		if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
 			break ;
 		if (!is_there_dead_philo(p->all->philo, *p->av[nbr])
-				&& t_philo_sleep(p) > 0) // set state
+				&& t_philo_sleep(p) > 0)
 			t_philo_set_state(p, dead);
 		if ((p->av[must_eat] && *(p->av[must_eat]) == p->meal_nbr))
 			break ;

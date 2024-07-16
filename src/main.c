@@ -17,14 +17,14 @@ int	main(int argc, char **argv)
 	t_all	all;
 
 	if (argc > 6)
-		printf("Too many arguments.\n");
+		ft_putstr_fd("Too many arguments.\n", 2);
 	else if (argc >= 5)
 	{
 		if (check_format(argv + 1))
 		{
 			if (t_all_init(&all, argc - 1, argv + 1))
 				print_error(all.error);
-			else //
+			else
 			{
 				if (!t_philotab_thcreate(all.philo, *(all.av[nbr])))
 					t_philotab_thjoin(all.philo, *(all.av[nbr]));
@@ -32,9 +32,9 @@ int	main(int argc, char **argv)
 			}
 		}
 		else
-			printf("Invalid argument(s).\n");
+			ft_putstr_fd("Invalid argument(s).\n", 2);
 	}
 	else
-		printf("Too few arguments.\n");
+		ft_putstr_fd("Too few arguments.\n", 2);
 	return (0);
 }

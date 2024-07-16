@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_philo_action.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 14:49:23 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/15 19:23:28 by marvin           ###   ########.fr       */
+/*   Updated: 2024/07/16 15:27:37 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ int	t_philo_eat(t_philo *p)
 	size_t	time;
 
 	t_philo_set_state(p, eating);
-	p->meal_nbr++;
 	p->last_meal_time = get_timestamp() - p->start_time;
 	start_time = get_timestamp();
 	time = 0;
@@ -28,14 +27,10 @@ int	t_philo_eat(t_philo *p)
 		usleep(500);
 		time = get_timestamp() - start_time;
 	}
+	p->meal_nbr++;
 	if (is_there_dead_philo(p->all->philo, *(p->av[nbr])))
-	{
-/*		pthread_mutex_lock(p->out_m);
-		printf("%lu there is dead philo\n", p->index);
-		pthread_mutex_unlock(p->out_m);
-*/		return (-1);
-	}
-	return (time >= *(p->av[to_die])); // ?
+		return (-1);
+	return (time >= *(p->av[to_die]));
 }
 
 int	t_philo_sleep(t_philo *p)

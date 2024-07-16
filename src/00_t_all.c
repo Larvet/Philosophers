@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   00_t_all.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/10 18:24:31 by marvin            #+#    #+#             */
-/*   Updated: 2024/06/24 16:01:27 by locharve         ###   ########.fr       */
+/*   Created: 2024/07/16 14:46:57 by locharve          #+#    #+#             */
+/*   Updated: 2024/07/16 14:46:57 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static t_error	mutextab_init(pthread_mutex_t *mtab, size_t n)
 	size_t	i;
 
 	i = 0;
-	while (i < n && !pthread_mutex_init(&mtab[i], NULL)) /// retour d'erreur ?
+	while (i < n && !pthread_mutex_init(&mtab[i], NULL))
 	{
 		i++;
 	}
@@ -112,34 +112,30 @@ void	t_all_destroy(t_all *all)
 	if (all->ftab)
 		free(all->ftab);
 	if (all->philo)
-	{
-		//out_mutex_destroy(all->philo, *(all->av[nbr]));
 		free(all->philo);
-		//t_philotab_free(all->philo);
-	}
 	if (all->av)
 		size_tptrtab_free(all->av);
 	pthread_mutex_destroy(&all->out_m);
 }
 
-void	t_all_print(t_all *all)
-{
-	printf("AV---------------------\n");
-	size_tptrtab_print(all->av);
-	printf("PHILOS-----------------\n");
-	t_philotab_print(all->philo);
-}
-
 void	print_error(t_error error)
 {
 	if (error)
-		printf("error %d\n", error); // ft_putstr_fd
-	/* if (error == err_malloc)
+		ft_putstr_fd("error ", 2);
+	if (error == err_malloc)
+		ft_putstr_fd("malloc\n", 2);
 	else if (error == err_invalid_arg)
+		ft_putstr_fd("invalid argument\n", 2);
 	else if (error == err_thcreate)
+		ft_putstr_fd("thread create\n", 2);
 	else if (error == err_thjoin)
+		ft_putstr_fd("thread join\n", 2);
 	else if (error == err_minit)
+		ft_putstr_fd("mutex init\n", 2);
 	else if (error == err_mdestroy)
+		ft_putstr_fd("mutex destroy\n", 2);
 	else if (error == err_mlock)
-	else if (error == err_munlock) */
+		ft_putstr_fd("mutex lock\n", 2);
+	else if (error == err_munlock)
+		ft_putstr_fd("mutex unlock\n", 2);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   think.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: locharve <locharve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 12:29:31 by locharve          #+#    #+#             */
-/*   Updated: 2024/07/15 19:22:48 by marvin           ###   ########.fr       */
+/*   Updated: 2024/07/16 15:32:29 by locharve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@ static t_state	t_philo_take_fork(t_philo *p, t_fork *f)
 			t_philo_set_state(p, dead);
 			return (p->state);
 		}
-//		pthread_mutex_unlock(f->mutex);
-//		printf("coucou\n");
 		usleep(500);
 		pthread_mutex_lock(f->mutex);
 		time = get_timestamp() - start_ts;
@@ -47,11 +45,7 @@ static t_state	t_philo_take_fork(t_philo *p, t_fork *f)
 		print_state(p->out_m, p->start_time, p->index, FORK_TAKEN);
 	}
 	else
-	{
-//		printf("\t%lu ftaken = %lu\ttime+timetd = %lu\tto_die = %lu\n",
-//				p->index, f->taken, time + time_td, *(p->av[to_die]));
 		t_philo_set_state(p, dead);
-	}
 	pthread_mutex_unlock(f->mutex);
 	return (p->state);
 }
@@ -78,12 +72,32 @@ void	t_philo_drop_forks(t_philo *p)
 	}
 }
 
+static int	lmtime_is_oldest(t_philo *ptab, size_t index)
+{
+	size_t	p_lmt;
+	size_t	i;
+	size_t	n;
+
+	p_lmt = (ptab + (index - 1))->last_meal_time;
+	i = 0;
+	n = *(ptab->av[nbr]);
+	while (i < n)
+	{
+		if (i != index - 1 && (ptab + i)->last_meal_time < p_lmt)
+			break ;
+		i++;
+	}
+	return (i == n);
+}
+
 int	t_philo_think(t_philo *p)
 {
 	t_philo_set_state(p, thinking);
+
 	if (p->index % 2)
 	{
-		usleep(500);
+		if (p->meal_nbr > 0 && !lmtime_is_oldest(p->all->philo, p->index))
+			usleep(1000);
 		if (t_philo_take_fork(p, p->f[0]) == dead)
 			return (1);
 		if (t_philo_take_fork(p, p->f[1]) == dead)
@@ -91,7 +105,6 @@ int	t_philo_think(t_philo *p)
 	}
 	else
 	{
-//		usleep(1000);
 		if (t_philo_take_fork(p, p->f[1]) == dead)
 			return (1);
 		if (t_philo_take_fork(p, p->f[0]) == dead)

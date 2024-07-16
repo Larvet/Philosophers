@@ -11,19 +11,7 @@
 /* ************************************************************************** */
 
 #include "philo.h"
-/*
-t_error	t_fork_init(t_all *all, t_fork *f, size_t i)
-{
-	if (pthread_mutex_init(&f->taken_m, NULL))
-	{
-		t_error_set(&all->error, err_minit);
-		return (all->error);
-	}
-	f->mutex = all->mutex + i;
-	f->taken = 0;
-	return (err_none);
-}
-*/
+
 t_error	t_philo_init(t_all *all, t_philo *p, size_t i)
 {
 	p->all = all;
@@ -42,51 +30,9 @@ t_error	t_philo_init(t_all *all, t_philo *p, size_t i)
 		p->f[1] = &all->ftab[i + 1];
 	else
 		p->f[1] = &all->ftab[0];		
-/*	if (t_fork_init(all, &p->f[0], i))
-		return (all->error);
-	if (i < *(all->av[nbr]) - 1)
-	{
-		t_fork_init(all, &p->f[1], i + 1);
-	}
-	else
-	{
-		t_fork_init(all, &p->f[1], 0);
-	}
-*/	p->meal_nbr = 0;
+	p->meal_nbr = 0;
 	p->error = &all->error;
 	p->stop = &all->stop;
-	return (err_none);
-}
-
-void	t_philotab_print(t_philo *p)
-{
-	size_t	n;
-	size_t	i;
-
-	n = *(p->av[nbr]);
-	i = 0;
-	while (i < n)
-	{
-		printf("index = %lu\n", p[i].index);
-		i++;
-	}
-}
-
-t_error	t_philotab_free(t_philo *p, size_t n)
-{
-	(void) n;
-/*	size_t	i;
-
-	i = 0;
-	while (i < n && p && !pthread_mutex_destroy(&p[i].f[0].taken_m)
-			&& !pthread_mutex_destroy(&p[i].f[1].taken_m))
-		i++;
-	if (i < n)
-	{
-		t_error_set(p->error, err_mdestroy);
-		return (*(p->error)); // free p ?
-	}
-*/	free(p);
 	return (err_none);
 }
 
@@ -105,7 +51,7 @@ t_philo	*t_philotab_init(t_all *all)
 	{
 		if (t_philo_init(all, &result[i], i))
 		{
-			t_philotab_free(result, n);
+			free(result);
 			return (NULL);
 		}
 		i++;
@@ -128,7 +74,7 @@ char	*get_state_str(t_state state)
 }
 
 size_t	t_philo_set_state(t_philo *p, t_state state)
-{	// return t_error ?
+{
 	pthread_mutex_lock(&p->state_m);
 	p->state = state;
 	pthread_mutex_lock(p->stop_m);
@@ -136,7 +82,6 @@ size_t	t_philo_set_state(t_philo *p, t_state state)
 	{
 		if (state == dead)
 			*(p->stop) = 1;
-//		pthread_mutex_unlock(p->stop_m);
 		print_state(p->out_m, p->start_time, p->index, get_state_str(state));
 	}
 	pthread_mutex_unlock(p->stop_m);

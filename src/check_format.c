@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-static int	ft_strlen(char *str)
+int	ft_strlen(char *str)
 {
 	int	i;
 
@@ -22,14 +22,9 @@ static int	ft_strlen(char *str)
 	return (i);
 }
 
-static int	is_empty_str_in_tab(char **av)
+int	ft_isspace(int c)
 {
-	int	i;
-
-	i = 0;
-	while (av && av[i] && ft_strlen(av[i]) > 0)
-		i++;
-	return (av && av[i]);
+	return ((c >= 9 && c <= 13) || c == 32);
 }
 
 int	ft_isdigit(int c)
@@ -42,7 +37,34 @@ int	isonly_digit(char *str)
 	return (str && (!*str || (ft_isdigit(*str) && isonly_digit(str + 1))));
 }
 
+static size_t	size_t_check(char *str)
+{
+	size_t	result;
+	size_t	tmp;
+	size_t	i;
+
+	result = 0;
+	i = 0;
+	while (str && str[i] && ft_isspace(str[i]))
+		i++;
+	while (str && str[i] && ft_isdigit(str[i]))
+	{
+		tmp = str[i] - 48 + result * 10;
+		if (tmp < result)
+			return (0);
+		result = tmp;
+		i++;
+	}
+	return (result);
+}
+
 int	check_format(char **av)
 {
-	return (!is_empty_str_in_tab(av) && isonly_digit(*av));
+	int	i;
+
+	i = 0;
+	while (av && av[i] && ft_strlen(av[i]) > 0
+			&& isonly_digit(av[i]) && size_t_check(av[i]))
+		i++;
+	return (av && i > 0 && !av[i]);
 }
